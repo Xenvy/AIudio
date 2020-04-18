@@ -41,7 +41,6 @@ def openList():  # OPEN "MAIN LIST"
     main_tags[3] = ['3', '1', '2']
 
     MAIN_LIST = dict(zip(main_names, main_tags))
-
     return MAIN_LIST
 
 
@@ -52,7 +51,6 @@ def searchForTags(searchedDictionary, valueToFind):  # SEARCH ENGINE
     for item in items:
         if set(valueToFind).issubset(item[1]):
             keys.append(item[0])
-
     return keys
 
 
@@ -71,7 +69,7 @@ def namePlaylists():  # READ PLAYLIST NAMES
             name = file.readline().replace('\n', '')
             pl_name.append(name)
         file.close()
-
+        
     PLAYLIST_LIST = dict(zip(pl_name, pl_path))
     return PLAYLIST_LIST
 
