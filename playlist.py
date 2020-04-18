@@ -86,10 +86,6 @@ def displayPlaylist(givenListName, givenList, scrolling):  # PRINT TRACK TITLES
             break
 
 
-#!!sort playlist!!
-#tags in main.txt
-
-
 def menu(start):
     MAIN_LIST = openList()
     PLAYLISTS_LIST = namePlaylists()
