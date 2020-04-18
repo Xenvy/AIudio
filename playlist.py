@@ -1,8 +1,8 @@
 import os
 import sys
 
-MUSIC_PATH = r"C:\\Users\\Rafal\\PycharmProjects\\AJR\\Music"
-FOLDER_PATH = r"C:\\Users\\Rafal\\PycharmProjects\\AJR"
+MUSIC_PATH = r"C:\\Users\\[user_name]\\PycharmProjects\\Aludio\\Music"
+FOLDER_PATH = r"C:\\Users\\[user_name]\\PycharmProjects\\Aludio"
 FORMATS = ['.mp3', '.wav', '.ogg', '.flac']
 
 
