@@ -87,10 +87,11 @@ def displayPlaylist(givenListName, givenList, scrolling):  # PRINT TRACK TITLES
 
 
 def menu(start):
-    MAIN_LIST = openList()
     PLAYLISTS_LIST = namePlaylists()
 
     if start:
+        MAIN_LIST = openList()
+
         global cursor, scrolling, activeListName, activeList
         cursor = 0
         scrolling = 0
@@ -99,9 +100,6 @@ def menu(start):
 
     if not (cursor < len(activeList) - 1 or cursor > 0):
         cursor = 0
-
-    if activeList != list(MAIN_LIST.keys()) and activeListName == '"All Songs"':
-        activeList = list(MAIN_LIST.keys())
 
     print("\n***\n")
 
@@ -135,7 +133,7 @@ def menu(start):
         menu(False)
 
     elif choice == '5DOWN':
-        if not scrolling + 5 > len(activeList):
+        if not scrolling + 5 > len(activeList) - 1:
             cursor += 5
             scrolling += 5
         menu(False)
@@ -173,6 +171,7 @@ def menu(start):
 
         if name == 'all':
             activeListName = '"All Songs"'
+            MAIN_LIST = openList()
             activeList = list(MAIN_LIST.keys())
 
         elif name in PLAYLISTS_LIST.keys():
@@ -242,7 +241,11 @@ def menu(start):
         menu(False)
 
     elif choice == 'REFRESH':  # LOAD PLAYLIST AGAIN
-        if activeListName != '"All Songs"':
+        if activeListName == '"All Songs"':
+            MAIN_LIST = openList()
+            activeList = list(MAIN_LIST.keys())
+
+        else:
             name = activeListName
             if name in PLAYLISTS_LIST.keys():
                 activeList = []
