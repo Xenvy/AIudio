@@ -165,6 +165,8 @@ def menu(start):
 
     elif choice == 'CHOOSE':  # CHANGE PLAYLISTS
         name = input('')
+        cursor = 0
+        scrolling = 0
 
         if name == 'all':
             activeListName = '"All Songs"'
@@ -237,6 +239,9 @@ def menu(start):
         menu(False)
 
     elif choice == 'REFRESH':  # LOAD PLAYLIST AGAIN
+        cursor = 0
+        scrolling = 0
+        
         if activeListName == '"All Songs"':
             activeList = list(MAIN_LIST.keys())
 
