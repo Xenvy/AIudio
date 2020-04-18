@@ -188,7 +188,7 @@ def menu(start):
         menu(False)
 
     elif choice == 'SAVE':  # SAVE CHANGES TO PLAYLIST
-        if not activeListName == '"All Songs"':
+        if activeListName != '"All Songs"':
             path = PLAYLISTS_LIST[activeListName]
 
             with open('{}'.format(path), "w") as file:
