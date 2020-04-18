@@ -97,7 +97,7 @@ def menu(start):
         activeListName = '"All Songs"'
         activeList = list(MAIN_LIST.keys())
 
-    if cursor > len(activeList) - 1 or cursor < 0:
+    if not (cursor < len(activeList) - 1 or cursor > 0):
         cursor = 0
 
     print("\n***\n")
@@ -126,12 +126,14 @@ def menu(start):
         menu(False)
 
     elif choice == '5UP':  # MOVE PLAYLIST 5 UP/DOWN
-        if scrolling - 5 > 0:
+        if not scrolling - 5 < 0:
+            cursor -= 5
             scrolling -= 5
         menu(False)
 
     elif choice == '5DOWN':
-        if scrolling + 5 < len(activeList):
+        if not scrolling + 5 > len(activeList):
+            cursor += 5
             scrolling += 5
         menu(False)
 
@@ -186,7 +188,7 @@ def menu(start):
         menu(False)
 
     elif choice == 'SAVE':  # SAVE CHANGES TO PLAYLIST
-        if activeListName != '"All Songs"':
+        if not activeListName == '"All Songs"':
             path = PLAYLISTS_LIST[activeListName]
 
             with open('{}'.format(path), "w") as file:
@@ -200,16 +202,15 @@ def menu(start):
         if name in PLAYLISTS_LIST.keys():
             path = PLAYLISTS_LIST.get(name)
 
-            if PLAYLISTS_LIST.get(name):
-                with open('{}'.format(path), 'r+') as file:
+            with open('{}'.format(path), 'r+') as file:
 
-                    for line in file:
-                        if activeList[cursor] in line:
-                            break
+                for line in file:
+                    if activeList[cursor] in line:
+                        break
 
-                    else:
-                        file.write('{}\n'.format(activeList[cursor]))
-                file.close()
+                else:
+                    file.write('{}\n'.format(activeList[cursor]))
+            file.close()
         menu(False)
 
     elif choice == 'REMOVE':  # REMOVE FROM PLAYLIST
@@ -217,14 +218,13 @@ def menu(start):
         if name in PLAYLISTS_LIST.keys():
             path = PLAYLISTS_LIST.get(name)
 
-            if PLAYLISTS_LIST.get(name):
-                with open('{}'.format(path), 'r') as file:
-                    lines = file.readlines()
+            with open('{}'.format(path), 'r') as file:
+                lines = file.readlines()
 
-                with open('{}'.format(path), 'w') as file:
-                    for line in lines:
-                        if line.strip('\n') != activeList[cursor]:
-                            file.write(line)
+            with open('{}'.format(path), 'w') as file:
+                for line in lines:
+                    if line.strip('\n') != activeList[cursor]:
+                        file.write(line)
                 file.close()
         menu(False)
 
@@ -232,8 +232,6 @@ def menu(start):
         name = input('')
         if name in PLAYLISTS_LIST.keys():
             path = PLAYLISTS_LIST.get(name)
-
-        if PLAYLISTS_LIST.get(name):
             os.remove('{}'.format(path))
         menu(False)
 
@@ -245,3 +243,4 @@ def menu(start):
 
 
 menu(True)
+
