@@ -100,6 +100,9 @@ def menu(start):
     if not (cursor < len(activeList) - 1 or cursor > 0):
         cursor = 0
 
+    if activeList != list(MAIN_LIST.keys()) and activeListName == '"All Songs"':
+        activeList = list(MAIN_LIST.keys())
+
     print("\n***\n")
 
     print("CURSOR = {}\n".format(cursor))
@@ -185,6 +188,7 @@ def menu(start):
 
                     else:
                         activeList.append(line)
+            file.close()
         menu(False)
 
     elif choice == 'SAVE':  # SAVE CHANGES TO PLAYLIST
@@ -195,6 +199,7 @@ def menu(start):
                 file.write('{}\n'.format(activeListName))
                 for line in range(len(activeList)):
                     file.write('{}\n'.format(activeList[line]))
+            file.close()
         menu(False)
 
     elif choice == 'ADDTO':  # ADDS TO PLAYLIST
@@ -220,12 +225,13 @@ def menu(start):
 
             with open('{}'.format(path), 'r') as file:
                 lines = file.readlines()
+            file.close()
 
             with open('{}'.format(path), 'w') as file:
                 for line in lines:
                     if line.strip('\n') != activeList[cursor]:
                         file.write(line)
-                file.close()
+            file.close()
         menu(False)
 
     elif choice == 'DELETE':  # DELETE PLAYLIST
@@ -233,6 +239,21 @@ def menu(start):
         if name in PLAYLISTS_LIST.keys():
             path = PLAYLISTS_LIST.get(name)
             os.remove('{}'.format(path))
+        menu(False)
+
+    elif choice == 'REFRESH':  # LOAD PLAYLIST AGAIN
+        if activeListName != '"All Songs"':
+            name = activeListName
+            if name in PLAYLISTS_LIST.keys():
+                activeList = []
+                path = PLAYLISTS_LIST.get(name)
+
+                with open('{}'.format(path), 'r') as file:
+                    for line in file:
+                        line = line.replace('\n', '')
+
+                        if not line.startswith('"'):
+                            activeList.append(line)
         menu(False)
 
     elif choice == 'QUIT':
@@ -243,4 +264,3 @@ def menu(start):
 
 
 menu(True)
-
