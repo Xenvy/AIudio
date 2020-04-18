@@ -87,11 +87,10 @@ def displayPlaylist(givenListName, givenList, scrolling):  # PRINT TRACK TITLES
 
 
 def menu(start):
+    MAIN_LIST = openList()
     PLAYLISTS_LIST = namePlaylists()
 
     if start:
-        MAIN_LIST = openList()
-
         global cursor, scrolling, activeListName, activeList
         cursor = 0
         scrolling = 0
@@ -171,7 +170,6 @@ def menu(start):
 
         if name == 'all':
             activeListName = '"All Songs"'
-            MAIN_LIST = openList()
             activeList = list(MAIN_LIST.keys())
 
         elif name in PLAYLISTS_LIST.keys():
@@ -242,7 +240,6 @@ def menu(start):
 
     elif choice == 'REFRESH':  # LOAD PLAYLIST AGAIN
         if activeListName == '"All Songs"':
-            MAIN_LIST = openList()
             activeList = list(MAIN_LIST.keys())
 
         else:
