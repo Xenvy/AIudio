@@ -74,12 +74,19 @@ def namePlaylists():  # READ PLAYLIST NAMES
     return PLAYLIST_LIST
 
 
-def displayPlaylist(givenListName, givenList, scrolling):  # PRINT TRACK TITLES
+def displayPlaylist(givenListName, givenList, cursor, scrolling):  # PRINT TRACK TITLES
     times = 5
     print(givenListName)
     for display in range(times):
+        display += scrolling
+
+        if display == cursor:
+            displayCursor = '>'
+        else:
+            displayCursor = ''
+
         try:
-            print("{}".format(givenList[display+scrolling]))
+            print("{}{}".format(displayCursor, givenList[display]))
         except IndexError:
             break
 
@@ -95,24 +102,22 @@ def menu(start):
         activeListName = '"All Songs"'
         activeList = list(MAIN_LIST.keys())
 
-    if not (cursor < len(activeList) - 1 or cursor > 0):
-        cursor = 0
+    if not (0 <= cursor < len(activeList) and scrolling <= cursor < 5 + scrolling):
+        cursor = 0 + scrolling
 
     print("\n***\n")
-
-    print("CURSOR = {}\n".format(cursor))
-    displayPlaylist(activeListName, activeList, scrolling)
+    displayPlaylist(activeListName, activeList, cursor, scrolling)
 
     choice = input("Please enter your choice: ").upper()
 
     if choice == 'UP':  # CHANGE TRACK POSITION
         if not cursor - 1 < 0:
-            activeList[cursor],  activeList[cursor - 1] = activeList[cursor - 1],  activeList[cursor]
+            activeList[cursor], activeList[cursor - 1] = activeList[cursor - 1], activeList[cursor]
         menu(False)
 
     elif choice == 'DOWN':
         if not cursor + 1 > len(activeList) - 1:
-            activeList[cursor],  activeList[cursor + 1] = activeList[cursor + 1],  activeList[cursor]
+            activeList[cursor], activeList[cursor + 1] = activeList[cursor + 1], activeList[cursor]
         menu(False)
 
     elif choice == 'CUP':  # MOVE "SELECTED TRACK"
@@ -199,7 +204,7 @@ def menu(start):
             file.close()
         menu(False)
 
-    elif choice == 'ADDTO':  # ADDS TO PLAYLIST
+    elif choice == 'ADDTO':  # ADD TO PLAYLIST
         name = input('')
         if name in PLAYLISTS_LIST.keys():
             path = PLAYLISTS_LIST.get(name)
@@ -241,7 +246,7 @@ def menu(start):
     elif choice == 'REFRESH':  # LOAD PLAYLIST AGAIN
         cursor = 0
         scrolling = 0
-        
+
         if activeListName == '"All Songs"':
             activeList = list(MAIN_LIST.keys())
 
