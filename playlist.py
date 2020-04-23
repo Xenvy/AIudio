@@ -1,8 +1,8 @@
 import os
 import sys
 
-MUSIC_PATH = r"C:\\Users\\[user_name]\\PycharmProjects\\Aludio\\Music"
-FOLDER_PATH = r"C:\\Users\\[user_name]\\PycharmProjects\\Aludio"
+MUSIC_PATH = r"C:\\Users\\[user_name]\\PycharmProjects\\AIudio\\Music"
+FOLDER_PATH = r"C:\\Users\\[user_name]\\PycharmProjects\\AIudio"
 FORMATS = ['.mp3', '.wav', '.ogg', '.flac']
 
 
@@ -60,8 +60,7 @@ def namePlaylists():  # READ PLAYLIST NAMES
     pl_name = []
 
     for line in range(len(fileNames)):
-        if bool([check_format for check_format in ['txt'] if (check_format in fileNames[line])]) \
-                and fileNames[line].startswith('playlist'):
+        if fileNames[line].startswith('playlist') and fileNames[line].endswith('.txt'):
             pl_path.append(fileNames[line])
 
     for path in pl_path:
