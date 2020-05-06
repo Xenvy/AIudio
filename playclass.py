@@ -244,7 +244,8 @@ def menu(start):
             with open(FOLDER_PATH + r'\\playlist{}.ajr'.format(counter), 'w') as file:
                 file.write('"{}"\n'.format(name))
                 for result in RESULTS:
-                    file.write('{}\n'.format(result.tr_path.split(r'\\')[-1]))
+                    result = result.tr_path.split(r'\\')[-1]
+                    file.write('{}\n'.format(result.replace('.', '*', result.count('.') - 1)))
             file.close()
         menu(False)
 
@@ -268,9 +269,9 @@ def menu(start):
 
                             if not filename.startswith('"'):
                                 for instance2 in range(len(MAIN_LIST)):
-                                    if filename == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
+                                    if filename.replace('*', '.') == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
                                         pl_path = PLAYLISTS_LIST[instance].pl_filename
-                                        tr_path = MAIN_LIST[instance2].tr_path
+                                        tr_path = MAIN_LIST[instance2].tr_path.replace(MAIN_LIST[instance2].tr_path.split(r'\\')[-1], filename)
                                         activeList.append(SOUND_FILE(pl_path, pl_name, tr_path, None))
                     file.close()
                     break
