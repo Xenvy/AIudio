@@ -383,7 +383,7 @@ def menu(start):
             cursor = 0
             scrolling = 0
         else:
-            if not cursor < 4 + scrolling:
+            if not cursor < 5 + scrolling:
                 scrolling += 5
             mixer.music.stop()
             mixer.music.load(activeList[cursor].tr_path)
