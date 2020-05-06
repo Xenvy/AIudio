@@ -5,8 +5,8 @@ import sys
 FORMATS = ['.mp3', '.wav', '.ogg', '.flac']
 
 global FOLDER_PATH, MUSIC_PATHS
-FOLDER_PATH = r'C:\\Users\\Rafal\\PycharmProjects\\AIudio'
-MUSIC_PATHS = [r'C:\\Users\\Rafal\\PycharmProjects\\AIudio\\Music', r'C:\\Users\\Rafal\\PycharmProjects\\AIudio\\Music2']
+FOLDER_PATH = r'C:\\Users\\[user_name]\\PycharmProjects\\AIudio'
+MUSIC_PATHS = [r'C:\\Users\\[user_name]\\PycharmProjects\\AIudio\\Music', r'C:\\Users\\[user_name]\\PycharmProjects\\AIudio\\Music2']
 
 mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
 
@@ -126,9 +126,6 @@ def displayPlaylist(givenListName, givenList, cursor, scrolling):  # PRINT TRACK
             print("{}{}".format(displayCursor, givenList[display].tr_name))
         except IndexError:
             break
-
-
-#tags in main.ajr
 
 
 def menu(start):
