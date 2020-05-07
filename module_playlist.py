@@ -5,8 +5,8 @@ import sys
 FORMATS = ['.mp3', '.wav', '.ogg', '.flac']
 
 global FOLDER_PATH, MUSIC_PATHS, ACTIVE_LIST
-FOLDER_PATH = r'C:\\Users\\Rafal\\PycharmProjects\\AIudio'
-MUSIC_PATHS = [r'C:\\Users\\Rafal\\PycharmProjects\\AIudio\\Music', r'C:\\Users\\Rafal\\PycharmProjects\\AIudio\\Music2']
+FOLDER_PATH = r'C:\\Users\\[USERNAME]\\PycharmProjects\\AIudio'
+MUSIC_PATHS = [r'C:\\Users\\[USERNAME]\\PycharmProjects\\AIudio\\Music', r'C:\\Users\\Rafal\\PycharmProjects\\AIudio\\Music2']
 ACTIVE_LIST = []
 
 mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
