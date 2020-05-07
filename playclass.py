@@ -346,15 +346,16 @@ def menu(start):
                     activeList = []
 
                     with open('{}'.format(path), 'r') as file:
-                        for filename in file:
-                            filename = filename.replace('\n', '')
+                        for line in file:
+                            line = line.replace('\n', '')
 
-                            if not filename.startswith('"'):
+                            if not line.startswith('"'):
                                 for instance2 in range(len(MAIN_LIST)):
-                                    if filename == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
+                                    if line.replace('*', '.') == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
                                         pl_path = PLAYLISTS_LIST[instance].pl_filename
-                                        tr_path = MAIN_LIST[instance2].tr_path
+                                        tr_path = MAIN_LIST[instance2].tr_path.replace(MAIN_LIST[instance2].tr_path.split(r'\\')[-1], line)
                                         activeList.append(SOUND_FILE(pl_path, pl_name, tr_path, None))
+                                        break
                     file.close()
                     break
         menu(False)
