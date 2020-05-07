@@ -299,7 +299,8 @@ def menu(start):
                         if activeList[cursor].tr_name in line:
                             break
                     else:
-                        file.write('{}\n'.format(activeList[cursor].tr_path.split(r'\\')[-1]))
+                        filename = activeList[cursor].tr_path.split(r'\\')[-1]
+                        file.write('{}\n'.format(filename.replace('.', '*', filename.count('.') - 1)))
                 file.close()
         menu(False)
 
