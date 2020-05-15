@@ -225,7 +225,7 @@ def addTag(tracks_filenames, tags, indicator):  # ADD NEW TAGS
         for instance in range(len(contents)):
             if contents[instance].replace('\n', '').replace('*', '.') == filename:
                 for tag in tags:
-                    if f'"{tag}"' not in contents[instance+1]:
+                    if f'{tag}:' not in contents[instance+1]:
                         contents[instance+1] = contents[instance+1].replace('>', f'{tag}:{indicator} >')
 
     with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'w') as file:
@@ -242,7 +242,7 @@ def removeTag(tracks_filenames, tags):  # REMOVE TAGS
         for instance in range(len(contents)):
             if contents[instance].replace('\n', '').replace('*', '.') == filename:
                 for tag in tags:
-                    if f'"{tag}"' in contents[instance+1]:
+                    if f'{tag}:' in contents[instance+1]:
                         contents[instance+1] = contents[instance+1].replace(f'{tag}:0 ', '')
 
     with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'w') as file:
@@ -465,13 +465,13 @@ def menu(start):
         menu(False)
 
     elif choice == 'TAG':
-        tag = input('').upper()
+        tag = input('').upper().replace(':', ';')
         addTag([ACTIVE_LIST[cursor].tr_path.split(r'\\')[-1]], [tag], 0)
         refresh(False)
         menu(False)
 
     elif choice == 'UNTAG':
-        tag = input('').upper()
+        tag = input('').upper().replace(':', ';')
         removeTag([ACTIVE_LIST[cursor].tr_path.split(r'\\')[-1]], [tag])
         refresh(False)
         menu(False)
