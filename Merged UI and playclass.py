@@ -28,6 +28,7 @@ def Start_Playback():
         mixer.music.play()
 
 def Pause_Playback():
+    global paused
     mixer.music.pause()
     paused=1
 
@@ -471,6 +472,7 @@ def startup():
     MAIN_LIST = openList()
     PLAYLISTS_LIST = namePlaylists()
     ACTIVE_LIST = MAIN_LIST
+    displayPlaylist(MAIN_LIST, 0, 0)
 
 
 startup()
