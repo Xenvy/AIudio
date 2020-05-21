@@ -11,9 +11,8 @@ cursor = 0
 paused = 0
 
 global FOLDER_PATH, MUSIC_PATHS, MAIN_LIST, PLAYLISTS_LIST, ACTIVE_LIST
-FOLDER_PATH = r'C:\\Users\\[...]\\PycharmProjects\\AIudio'
-MUSIC_PATHS = [r'C:\\Users\\[...]\\PycharmProjects\\AIudio\\Music',
-               r'C:\\Users\\[...]\\PycharmProjects\\AIudio\\Music2']
+FOLDER_PATH = r'C:\\Users\\jasie\\source\\repos\\TeamProject\\TeamProject'
+MUSIC_PATHS = [r'C:\\Users\\jasie\\source\\repos\\TeamProject\\TeamProject']
 MAIN_LIST = PLAYLISTS_LIST = ACTIVE_LIST = []
 
 
@@ -61,6 +60,8 @@ def Previous_Track():
     mixer.music.load(ACTIVE_LIST[cursor].tr_path)
     mixer.music.play()
 
+def Change_Volume():
+    mixer.music.set_volume(current_volume.get())
 
 program_menu = tk.Menu(main_window)
 
@@ -98,6 +99,9 @@ program_menu.add_cascade(label='Library', menu=library_menu)
 
 main_window.config(menu=program_menu)
 
+current_volume=tk.DoubleVar()
+volume_slider=tk.Scale(main_window, from_=0, to=1, resolution=0.01, orient="horizontal", variable=current_volume, command=Change_Volume())
+
 music_library = tk.LabelFrame(main_window, text="Music library")
 music_library.grid(column=0, row=0, rowspan=3, sticky=tk.NW)
 
@@ -106,17 +110,17 @@ library_content = tk.Label(music_library, anchor=tk.NW, justify=tk.LEFT, textvar
 library_content.grid(column=0, row=1, rowspan=2, sticky=tk.NW)
 
 visualization = tk.LabelFrame(main_window, text="Visualization")
-visualization.grid(column=0, columnspan=7, row=3, rowspan=2, sticky=tk.NW)
+visualization.grid(column=0, columnspan=7, row=4, rowspan=2, sticky=tk.NW)
 
 visualization_inside = tk.Label(visualization, anchor=tk.NW, justify=tk.LEFT, text=" ", height=15, width=182)
-visualization_inside.grid(column=0, columnspan=7, row=4, sticky=tk.NW)
+visualization_inside.grid(column=0, columnspan=7, row=5, sticky=tk.NW)
 
 playlist_widget = tk.LabelFrame(main_window, text="Playlist")
-playlist_widget.grid(column=1, columnspan=6, row=1, rowspan=2, sticky=tk.NW)
+playlist_widget.grid(column=1, columnspan=6, row=1, rowspan=1, sticky=tk.NW)
 
 playlist_contents = tk.Label(playlist_widget, anchor=tk.NW, justify=tk.LEFT, textvariable=playlist_string, height=32,
                              width=80)
-playlist_contents.grid(column=1, columnspan=6, row=1, rowspan=2, sticky=tk.NW)
+playlist_contents.grid(column=1, columnspan=6, row=1, rowspan=1, sticky=tk.NW)
 
 track_info = tk.LabelFrame(main_window, text="Track details")
 track_info.grid(column=6, row=1, rowspan=2, sticky=tk.NW)
@@ -132,11 +136,12 @@ stop_button = tk.Button(main_window, text='Stop', width=8, height=1, command=lam
 previous_button = tk.Button(main_window, text='Previous', width=8, height=1, command=lambda: Previous_Track())
 next_button = tk.Button(main_window, text='Next', width=8, height=1, command=lambda: Next_Track())
 
-play_button.grid(column=1, row=2)
-pause_button.grid(column=2, row=2)
-stop_button.grid(column=3, row=2)
-previous_button.grid(column=4, row=2)
-next_button.grid(column=5, row=2)
+play_button.grid(column=1, row=3)
+pause_button.grid(column=2, row=3)
+stop_button.grid(column=3, row=3)
+previous_button.grid(column=4, row=3)
+next_button.grid(column=5, row=3)
+volume_slider.grid(column=3, row=2)
 
 main_window.columnconfigure(0, minsize=420)
 main_window.columnconfigure(1, minsize=80)
@@ -145,9 +150,10 @@ main_window.columnconfigure(3, minsize=80)
 main_window.columnconfigure(4, minsize=80)
 main_window.columnconfigure(5, minsize=80)
 main_window.columnconfigure(6, minsize=400)
-main_window.rowconfigure(1, minsize=440)
+main_window.rowconfigure(1, minsize=410)
 main_window.rowconfigure(2, minsize=20)
-main_window.rowconfigure(4, minsize=240)
+main_window.rowconfigure(3, minsize=40)
+main_window.rowconfigure(5, minsize=240)
 
 
 class PLAYLIST:
