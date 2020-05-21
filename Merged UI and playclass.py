@@ -279,10 +279,9 @@ def readPlaylists():  # READ PLAYLIST NAMES
 
 
 def displayPlaylist(givenList):  # PRINT PLAYLIST
-    times = 5
     temporary_stringing = '\t'
 
-    for instance in range(times):
+    for instance in range(len(givenList)):
         try:
             track_filename = givenList[instance].tr_path.split(r'\\')[-1]
             name = '{}'.format(track_filename.replace('.{}'.format(track_filename.split('.')[-1]), ''))
