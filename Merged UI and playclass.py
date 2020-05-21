@@ -162,14 +162,11 @@ class SOUND_FILE(PLAYLIST):
         self.pl_filename = playlist_filename
         self.pl_name = playlist_name
 
-        self.tr_path = track_path.replace('*', '.')
-        track_filename = track_path.split(r'\\')[-1]
-        self.tr_name = track_filename.split('.')[0].replace('*', '.')
-        self.tr_format = '.{}'.format(track_filename.split('.')[1])
+        self.tr_path = track_path
         self.tr_tags = track_tags
 
 
-# BASE FUNCTIONS
+# BASE FUNCTIONS:
 
 def createList(first):  # NEW "MAIN LIST"
     open(FOLDER_PATH + r'\\{}'.format('main_raw.ajr'), 'w')
@@ -184,8 +181,7 @@ def createList(first):  # NEW "MAIN LIST"
                     isascii = lambda s: len(s) == len(s.encode())
                     if isascii(fileNames[filename]):
                         if fileNames[filename].endswith(FORMATS[checkFormat]):
-                            dirtyFile.write('{}\r'.format(
-                                fileNames[filename].replace('.', '*', fileNames[filename].count('.') - 1)))
+                            dirtyFile.write(f'{fileNames[filename]}\r')
                             break
         dirtyFile.close()
 
@@ -282,26 +278,15 @@ def readPlaylists():  # READ PLAYLIST NAMES
     return PLAYLISTS_LIST
 
 
-def displayPlaylist(givenList, cursor, scrolling):  # PRINT PLAYLIST
+def displayPlaylist(givenList):  # PRINT PLAYLIST
     times = 5
     temporary_stringing = '\t'
 
-    try:
-        print(ACTIVE_LIST[0].pl_name)
-    except IndexError:
-        print("This playlist is empty!")
-
-    for display in range(times):
-        display += scrolling
-
-        if display == cursor:
-            displayCursor = '>'
-        else:
-            displayCursor = ''
-
+    for instance in range(times):
         try:
-            print(f"{displayCursor}{givenList[display].tr_name}")
-            temporary_stringing += f"\n\t{givenList[display].tr_name}"
+            track_filename = givenList[instance].tr_path.split(r'\\')[-1]
+            name = '{}'.format(track_filename.replace('.{}'.format(track_filename.split('.')[-1]), ''))
+            temporary_stringing += f'\n\t{name}'
             playlist_string.set(temporary_stringing)
         except IndexError:
             break
@@ -331,7 +316,7 @@ def sortPlaylist(how, playlist):  # SORT LIST
 
         for instance in range(len(FORMATS)):
             for instance2 in range(len(playlist)):
-                if FORMATS[instance] == playlist[instance2].tr_format:
+                if '.{}'.format(playlist[instance2].tr_path.split(r'\\')[-1].split('.')[-1]) == FORMATS[instance]:
                     format.append(playlist[instance2])
 
         sortedPlaylist = format
@@ -366,7 +351,7 @@ def addTag(tracks_filenames, tags, indicator):  # ADD NEW TAGS
 
     for filename in tracks_filenames:
         for instance in range(len(contents)):
-            if contents[instance].replace('\n', '').replace('*', '.') == filename:
+            if contents[instance].replace('\n', '') == filename:
                 for tag in tags:
                     if f'{tag}:' not in contents[instance+1]:
                         contents[instance+1] = contents[instance+1].replace('>', f'{tag}:{indicator} >')
@@ -383,7 +368,7 @@ def removeTag(tracks_filenames, tags):  # REMOVE TAGS
 
     for filename in tracks_filenames:
         for instance in range(len(contents)):
-            if contents[instance].replace('\n', '').replace('*', '.') == filename:
+            if contents[instance].replace('\n', '') == filename:
                 for tag in tags:
                     if f'{tag}:' in contents[instance+1]:
                         contents[instance+1] = contents[instance+1].replace(f'{tag}:0 ', '')
@@ -424,7 +409,7 @@ def createPlaylist(tag):  # NEW PLAYLIST
             file.write(f'"{name}"\n')
             for result in RESULTS:
                 result = result.tr_path.split(r'\\')[-1]
-                file.write('{}\n'.format(result.replace('.', '*', result.count('.') - 1)))
+                file.write(f'{result}\n')
         file.close()
 
 
@@ -446,11 +431,10 @@ def choosePlaylist(playlist_name):  # CHANGE PLAYLISTS
 
                         if not line.startswith('"'):
                             for instance2 in range(len(MAIN_LIST)):
-                                if line.replace('*', '.') == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
+                                if line == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
                                     pl_path = PLAYLISTS_LIST[instance].pl_filename
                                     pl_name = playlist_name
-                                    tr_path = MAIN_LIST[instance2].tr_path.replace(
-                                        MAIN_LIST[instance2].tr_path.split(r'\\')[-1], line)
+                                    tr_path = MAIN_LIST[instance2].tr_path.replace(MAIN_LIST[instance2].tr_path.split(r'\\')[-1], line)
                                     activeList.append(SOUND_FILE(pl_path, pl_name, tr_path, None))
                 file.close()
                 break
@@ -464,7 +448,7 @@ def savePlaylist():  # SAVE CHANGES TO PLAYLIST
         file.write(f'{ACTIVE_LIST[0].pl_name}\n')
         for instance in range(len(ACTIVE_LIST)):
             filename = ACTIVE_LIST[instance].tr_path.split(r'\\')[-1]
-            file.write('{}\n'.format(filename.replace('.', '*', filename.count('.') - 1)))
+            file.write(f'{filename}\n')
     file.close()
 
 
@@ -480,7 +464,7 @@ def addToPlaylist(playlists_filenames, tracks_filenames):  # ADD TO PLAYLIST
                     elif filename2 in line:
                         break
                 else:
-                    file.write('{}\n'.format(filename2.replace('.', '*', filename2.count('.') - 1)))
+                    file.write(f'{filename2}\n')
             file.close()
 
 
@@ -493,10 +477,10 @@ def removeFromPlaylist(playlist_filename, tracks_filenames):  # REMOVE FROM PLAY
 
     for filename in tracks_filenames:
         for line in file_lines:
-            if line.replace('\n', '').replace('*', '.') == filename:
+            if line.replace('\n', '') == filename:
                 file_lines.remove(line)
 
-    with open('{}'.format(path), 'w') as file:
+    with open(f'{path}', 'w') as file:
         for line in file_lines:
             file.write(line)
     file.close()
@@ -532,10 +516,9 @@ def refresh(complete):  # LOAD PLAYLIST AGAIN
 
                             if not line.startswith('"'):
                                 for instance2 in range(len(MAIN_LIST)):
-                                    if line.replace('*', '.') == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
+                                    if line == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
                                         pl_path = PLAYLISTS_LIST[instance].pl_filename
-                                        tr_path = MAIN_LIST[instance2].tr_path.replace(
-                                            MAIN_LIST[instance2].tr_path.split(r'\\')[-1], line)
+                                        tr_path = MAIN_LIST[instance2].tr_path.replace(MAIN_LIST[instance2].tr_path.split(r'\\')[-1], line)
                                         activeList.append(SOUND_FILE(pl_path, pl_name, tr_path, None))
                                         break
                     file.close()
@@ -549,7 +532,8 @@ def startup():
     MAIN_LIST = readMainList()
     PLAYLISTS_LIST = readPlaylists()
     ACTIVE_LIST = MAIN_LIST
-    displayPlaylist(MAIN_LIST, 0, 0)
+    displayPlaylist(MAIN_LIST)
+
 
 startup()
 
