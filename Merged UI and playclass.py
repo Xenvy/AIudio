@@ -1,7 +1,6 @@
 from pygame import mixer
 import tkinter as tk
 import os
-import sys
 
 main_window = tk.Tk()
 main_window.geometry("1280x720")
@@ -12,10 +11,11 @@ cursor = 0
 paused = 0
 
 global FOLDER_PATH, MUSIC_PATHS, MAIN_LIST, PLAYLISTS_LIST, ACTIVE_LIST
-FOLDER_PATH = r'C:\\Users\\jasie\\source\\repos\\TeamProject\\TeamProject'
-MUSIC_PATHS = [r'C:\\Users\\jasie\\source\\repos\\TeamProject\\TeamProject',
-               r'C:\\Users\\jasie\\source\\repos\\TeamProject']
+FOLDER_PATH = r'C:\\Users\\[...]\\PycharmProjects\\AIudio'
+MUSIC_PATHS = [r'C:\\Users\\[...]\\PycharmProjects\\AIudio\\Music',
+               r'C:\\Users\\[...]\\PycharmProjects\\AIudio\\Music2']
 MAIN_LIST = PLAYLISTS_LIST = ACTIVE_LIST = []
+
 
 def Start_Playback():
     global MAIN_LIST, cursor, paused
@@ -27,16 +27,20 @@ def Start_Playback():
         mixer.music.load(MAIN_LIST[cursor].tr_path)
         mixer.music.play()
 
+
 def Pause_Playback():
-    global paused
     mixer.music.pause()
-    paused=1
+    global paused
+    paused = 1
+
 
 def Stop_Playback():
     mixer.music.stop()
 
+
 def Set_Volume(volume):
     mixer.music.set_volume(volume)
+
 
 def Next_Track():
     global cursor
@@ -47,21 +51,21 @@ def Next_Track():
     mixer.music.load(MAIN_LIST[cursor].tr_path)
     mixer.music.play()
 
+
 def Previous_Track():
     global cursor
-    cursor-=1
+    cursor -= 1
     if not 0 <= cursor:
         cursor = 0
     mixer.music.stop()
     mixer.music.load(MAIN_LIST[cursor].tr_path)
     mixer.music.play()
 
-#Start_Playback("music1.ogg")
 
 program_menu = tk.Menu(main_window)
 
-library_string=tk.StringVar()
-playlist_string=tk.StringVar()
+library_string = tk.StringVar()
+playlist_string = tk.StringVar()
 
 file_menu = tk.Menu(program_menu, tearoff=0)
 file_menu.add_command(label='Open')
@@ -96,33 +100,37 @@ main_window.config(menu=program_menu)
 
 music_library = tk.LabelFrame(main_window, text="Music library")
 music_library.grid(column=0, row=0, rowspan=3, sticky=tk.NW)
- 
-library_content = tk.Label(music_library, anchor=tk.NW, justify=tk.LEFT, textvariable=library_string, height=32, width=60)
+
+library_content = tk.Label(music_library, anchor=tk.NW, justify=tk.LEFT, textvariable=library_string, height=32,
+                           width=60)
 library_content.grid(column=0, row=1, rowspan=2, sticky=tk.NW)
 
 visualization = tk.LabelFrame(main_window, text="Visualization")
 visualization.grid(column=0, columnspan=7, row=3, rowspan=2, sticky=tk.NW)
- 
+
 visualization_inside = tk.Label(visualization, anchor=tk.NW, justify=tk.LEFT, text=" ", height=15, width=182)
 visualization_inside.grid(column=0, columnspan=7, row=4, sticky=tk.NW)
 
 playlist_widget = tk.LabelFrame(main_window, text="Playlist")
 playlist_widget.grid(column=1, columnspan=6, row=1, rowspan=2, sticky=tk.NW)
- 
-playlist_contents = tk.Label(playlist_widget, anchor=tk.NW, justify=tk.LEFT, textvariable=playlist_string, height=32, width=80)
+
+playlist_contents = tk.Label(playlist_widget, anchor=tk.NW, justify=tk.LEFT, textvariable=playlist_string, height=32,
+                             width=80)
 playlist_contents.grid(column=1, columnspan=6, row=1, rowspan=2, sticky=tk.NW)
 
 track_info = tk.LabelFrame(main_window, text="Track details")
 track_info.grid(column=6, row=1, rowspan=2, sticky=tk.NW)
- 
-track_info_contents = tk.Label(track_info, anchor=tk.NW, justify=tk.LEFT, text="\tFilename\tExample filename.mp3\n\tDuration\t\t4:20\n\tSample rate\t44.1 kHz\n\tChannels\t2\n\tCodec\t\tMP3\n\tBitrate\t\t320kbps", height=32, width=60)
+
+track_info_contents = tk.Label(track_info, anchor=tk.NW, justify=tk.LEFT,
+                               text="\tFilename\tExample filename.mp3\n\tDuration\t\t4:20\n\tSample rate\t44.1 kHz\n\tChannels\t2\n\tCodec\t\tMP3\n\tBitrate\t\t320kbps",
+                               height=32, width=60)
 track_info_contents.grid(column=6, row=1, rowspan=2, sticky=tk.NW)
 
-play_button=tk.Button(main_window, text='Play', width=8, height=1, command = lambda:Start_Playback())
-pause_button=tk.Button(main_window, text='Pause', width=8, height=1, command = lambda:Pause_Playback())
-stop_button=tk.Button(main_window, text='Stop', width=8, height=1, command = lambda:Stop_Playback())
-previous_button=tk.Button(main_window, text='Previous', width=8, height=1, command = lambda:Previous_Track())
-next_button=tk.Button(main_window, text='Next', width=8, height=1, command = lambda:Next_Track())
+play_button = tk.Button(main_window, text='Play', width=8, height=1, command=lambda: Start_Playback())
+pause_button = tk.Button(main_window, text='Pause', width=8, height=1, command=lambda: Pause_Playback())
+stop_button = tk.Button(main_window, text='Stop', width=8, height=1, command=lambda: Stop_Playback())
+previous_button = tk.Button(main_window, text='Previous', width=8, height=1, command=lambda: Previous_Track())
+next_button = tk.Button(main_window, text='Next', width=8, height=1, command=lambda: Next_Track())
 
 play_button.grid(column=1, row=2)
 pause_button.grid(column=2, row=2)
@@ -140,7 +148,6 @@ main_window.columnconfigure(6, minsize=400)
 main_window.rowconfigure(1, minsize=440)
 main_window.rowconfigure(2, minsize=20)
 main_window.rowconfigure(4, minsize=240)
-
 
 
 class PLAYLIST:
@@ -164,8 +171,9 @@ class SOUND_FILE(PLAYLIST):
 
 # BASE FUNCTIONS
 
-def createList():  # NEW "MAIN LIST"
+def createList(first):  # NEW "MAIN LIST"
     open(FOLDER_PATH + r'\\{}'.format('main_raw.ajr'), 'w')
+
     for path in range(len(MUSIC_PATHS)):
         fileNames = os.listdir(MUSIC_PATHS[path])
 
@@ -181,11 +189,30 @@ def createList():  # NEW "MAIN LIST"
                             break
         dirtyFile.close()
 
+    names = []
+    tags = []
+    if not first:  # COPY TAGS FROM OLD "MAIN LIST"
+        with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'r') as file:
+            for line in file:
+                if not line.startswith('"') and not line.startswith('<'):
+                    names.append(line)
+                elif line.startswith('<'):
+                    tags.append(line)
+        file.close()
+
+    copyTags = dict(zip(names, tags))
+    del names, tags
+
     lines_seen = set()
     with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'w') as cleanFile:  # "MAIN LIST" WITHOUT DUPLICATES
         for line in open(FOLDER_PATH + r'\\{}'.format('main_raw.ajr'), 'r'):
             if line not in lines_seen:
                 cleanFile.write(line)
+                if not line.startswith('"'):
+                    if line in copyTags:
+                        cleanFile.write(copyTags[line])
+                    else:
+                        cleanFile.write('< >\n')
                 lines_seen.add(line)
         dirtyFile.close()
     cleanFile.close()
@@ -193,14 +220,14 @@ def createList():  # NEW "MAIN LIST"
     os.remove(FOLDER_PATH + r'\\{}'.format('main_raw.ajr'))
 
 
-def openList():  # OPEN "MAIN LIST"
+def readMainList():  # READ "MAIN LIST"
     try:
         open('main.ajr', 'r')
     except IOError:
-        createList()
+        createList(True)
 
     MAIN_LIST = []
-    temp_str="\t"
+    temporary_stringing = "\t"
 
     with open('main.ajr', 'r') as file:  # ADD TRACK
         for line in file:
@@ -208,20 +235,27 @@ def openList():  # OPEN "MAIN LIST"
             if line.startswith('"'):
                 MUSIC_PATH = line.replace('"', '')
             else:
-                pl_path = FOLDER_PATH + r'\\{}'.format('main.ajr')
-                pl_name = '"All Songs"'
-                tr_path = MUSIC_PATH + r'\\{}'.format(line)
-                temp_str=temp_str+"\n\t"+line
-                MAIN_LIST.append(SOUND_FILE(pl_path, pl_name, tr_path, []))
+                if not line.startswith('<'):
+                    pl_path = FOLDER_PATH + r'\\{}'.format('main.ajr')
+                    pl_name = '"All Songs"'
+                    tr_path = MUSIC_PATH + r'\\{}'.format(line)
+                    temporary_stringing = temporary_stringing + "\n\t" + line
+                else:
+                    tr_tags = []
+                    if not line.startswith('< >'):
+                        for tag in readTags(line):
+                            tr_tags.append(tag.split(':')[0])
+                    MAIN_LIST.append(SOUND_FILE(pl_path, pl_name, tr_path, tr_tags))
     file.close()
 
-    library_string.set(temp_str)
-    MAIN_LIST[0].tr_tags = ['2']  # ADD TAGS
-    MAIN_LIST[1].tr_tags = ['1', '2']
-    MAIN_LIST[2].tr_tags = ['3']
-#    MAIN_LIST[3].tr_tags = ['3', '1', '2']
-
+    library_string.set(temporary_stringing)
     return MAIN_LIST
+
+
+def readTags(line):  # READ TAGS
+    line = line.split()
+    del line[0], line[-1]
+    return line
 
 
 def searchForTags(inList, toFind):  # SEARCH ENGINE
@@ -233,7 +267,7 @@ def searchForTags(inList, toFind):  # SEARCH ENGINE
     return results
 
 
-def namePlaylists():  # READ PLAYLIST NAMES
+def readPlaylists():  # READ PLAYLIST NAMES
     PLAYLISTS_LIST = []
     fileNames = os.listdir(FOLDER_PATH)
 
@@ -248,9 +282,9 @@ def namePlaylists():  # READ PLAYLIST NAMES
     return PLAYLISTS_LIST
 
 
-def displayPlaylist(givenList, cursor, scrolling):  # PRINT TRACK TITLES
+def displayPlaylist(givenList, cursor, scrolling):  # PRINT PLAYLIST
     times = 5
-    temp_string="\t"
+    temporary_stringing = '\t'
 
     try:
         print(ACTIVE_LIST[0].pl_name)
@@ -264,17 +298,16 @@ def displayPlaylist(givenList, cursor, scrolling):  # PRINT TRACK TITLES
             displayCursor = '>'
         else:
             displayCursor = ''
-        
-        
+
         try:
             print(f"{displayCursor}{givenList[display].tr_name}")
-            temp_string+=f"\n\t{givenList[display].tr_name}"
-            playlist_string.set(temp_string)
+            temporary_stringing += f"\n\t{givenList[display].tr_name}"
+            playlist_string.set(temporary_stringing)
         except IndexError:
             break
 
 
-# DERIVATIVE FUNCTIONS
+# DERIVATIVE FUNCTIONS:
 
 def sortPlaylist(how, playlist):  # SORT LIST
     if how == 'ALPHA':
@@ -306,16 +339,63 @@ def sortPlaylist(how, playlist):  # SORT LIST
     elif how == 'FOLDER':
         MUSIC_PATHS.sort()
 
-        createList()
-        MAIN_LIST = openList()
+        createList(False)
+        MAIN_LIST = readMainList()
         sortedPlaylist = MAIN_LIST
 
     return sortedPlaylist
 
 
-def createPlaylist(tag):
+def findTags():  # FIND NEW TAGS ON THE INTERNET
+    #for instance in range(len(MAIN_LIST)):
+        #tags = ## DOWNLOAD TAGS
+        #addTag([MAIN_LIST[instance].tr_path.split(r'\\')[-1]], tags, 0)
+
+    # SIMULATED TAGS
+
+    MAIN_LIST[0].tr_tags = ['2']
+    MAIN_LIST[1].tr_tags = ['1', '2']
+    MAIN_LIST[2].tr_tags = ['3']
+    MAIN_LIST[3].tr_tags = ['3', '1', '2']
+
+
+def addTag(tracks_filenames, tags, indicator):  # ADD NEW TAGS
+    with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'r') as file:
+        contents = file.readlines()
+    file.close()
+
+    for filename in tracks_filenames:
+        for instance in range(len(contents)):
+            if contents[instance].replace('\n', '').replace('*', '.') == filename:
+                for tag in tags:
+                    if f'{tag}:' not in contents[instance+1]:
+                        contents[instance+1] = contents[instance+1].replace('>', f'{tag}:{indicator} >')
+
+    with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'w') as file:
+        file.writelines(contents)
+    file.close()
+
+
+def removeTag(tracks_filenames, tags):  # REMOVE TAGS
+    with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'r') as file:
+        contents = file.readlines()
+    file.close()
+
+    for filename in tracks_filenames:
+        for instance in range(len(contents)):
+            if contents[instance].replace('\n', '').replace('*', '.') == filename:
+                for tag in tags:
+                    if f'{tag}:' in contents[instance+1]:
+                        contents[instance+1] = contents[instance+1].replace(f'{tag}:0 ', '')
+
+    with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'w') as file:
+        file.writelines(contents)
+    file.close()
+
+
+def createPlaylist(tag):  # NEW PLAYLIST
     if tag != '':
-        if tag != 'empty':
+        if tag != 'EMPTY':
             RESULTS = searchForTags(MAIN_LIST, [tag])
         else:
             RESULTS = searchForTags(MAIN_LIST, [None])
@@ -326,12 +406,12 @@ def createPlaylist(tag):
     if not RESULTS and tag == '':
         print("Nothing found!")
     else:
-        name = input("Please enter your playlist's name: ")
+        name = input("Please enter your playlist's name: ").upper()
 
         for instance in range(len(PLAYLISTS_LIST)):
             while True:
                 if f'"{name}"' == PLAYLISTS_LIST[instance].pl_name:
-                    name = input("Choose another name: ")
+                    name = input("Choose another name: ").upper()
                     continue
                 else:
                     break
@@ -348,10 +428,10 @@ def createPlaylist(tag):
         file.close()
 
 
-def choosePlaylist(playlist_name):
+def choosePlaylist(playlist_name):  # CHANGE PLAYLISTS
     activeList = ACTIVE_LIST
 
-    if playlist_name == 'all':
+    if playlist_name == 'ALL':
         activeList = MAIN_LIST
 
     else:
@@ -377,7 +457,7 @@ def choosePlaylist(playlist_name):
     return activeList
 
 
-def savePlaylist():
+def savePlaylist():  # SAVE CHANGES TO PLAYLIST
     path = FOLDER_PATH + r'\\{}'.format(ACTIVE_LIST[0].pl_filename)
 
     with open(f'{path}', 'w') as file:
@@ -388,7 +468,7 @@ def savePlaylist():
     file.close()
 
 
-def addToPlaylist(playlists_filenames, tracks_filenames):
+def addToPlaylist(playlists_filenames, tracks_filenames):  # ADD TO PLAYLIST
     for filename in playlists_filenames:
         path = FOLDER_PATH + r'\\{}'.format(filename)
 
@@ -404,7 +484,7 @@ def addToPlaylist(playlists_filenames, tracks_filenames):
             file.close()
 
 
-def removeFromPlaylist(playlist_filename, tracks_filenames):
+def removeFromPlaylist(playlist_filename, tracks_filenames):  # REMOVE FROM PLAYLIST
     path = FOLDER_PATH + r'\\{}'.format(playlist_filename)
 
     with open(f'{path}', 'r') as file:
@@ -422,22 +502,19 @@ def removeFromPlaylist(playlist_filename, tracks_filenames):
     file.close()
 
 
-def deletePlaylist(playlists_filenames):
+def deletePlaylist(playlists_filenames):  # DELETE PLAYLIST
     for filename in playlists_filenames:
         path = FOLDER_PATH + r'\\{}'.format(filename)
         os.remove(f'{path}')
 
 
-def refresh():  # LOAD PLAYLIST AGAIN
+def refresh(complete):  # LOAD PLAYLIST AGAIN
     global MAIN_LIST, PLAYLISTS_LIST
-    createList()
-    MAIN_LIST = openList()
-    PLAYLISTS_LIST = namePlaylists()
+    createList(False)
+    MAIN_LIST = readMainList()
+    PLAYLISTS_LIST = readPlaylists()
 
-    if not ACTIVE_LIST:
-        pass
-
-    else:
+    if complete:
         if ACTIVE_LIST[0].pl_name == '"All Songs"':
             activeList = MAIN_LIST
 
@@ -469,11 +546,10 @@ def refresh():  # LOAD PLAYLIST AGAIN
 
 def startup():
     global MAIN_LIST, PLAYLISTS_LIST, ACTIVE_LIST
-    MAIN_LIST = openList()
-    PLAYLISTS_LIST = namePlaylists()
+    MAIN_LIST = readMainList()
+    PLAYLISTS_LIST = readPlaylists()
     ACTIVE_LIST = MAIN_LIST
     displayPlaylist(MAIN_LIST, 0, 0)
-
 
 startup()
 
