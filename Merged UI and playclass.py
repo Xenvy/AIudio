@@ -18,13 +18,13 @@ MAIN_LIST = PLAYLISTS_LIST = ACTIVE_LIST = []
 
 
 def Start_Playback():
-    global MAIN_LIST, cursor, paused
+    global cursor, paused
     if paused:
         mixer.music.unpause()
         paused = 0
     else:
         mixer.music.stop()
-        mixer.music.load(MAIN_LIST[cursor].tr_path)
+        mixer.music.load(ACTIVE_LIST[cursor].tr_path)
         mixer.music.play()
 
 
@@ -46,9 +46,9 @@ def Next_Track():
     global cursor
     cursor += 1
     mixer.music.stop()
-    if not cursor < len(MAIN_LIST):
+    if not cursor < len(ACTIVE_LIST):
         cursor = 0
-    mixer.music.load(MAIN_LIST[cursor].tr_path)
+    mixer.music.load(ACTIVE_LIST[cursor].tr_path)
     mixer.music.play()
 
 
@@ -58,7 +58,7 @@ def Previous_Track():
     if not 0 <= cursor:
         cursor = 0
     mixer.music.stop()
-    mixer.music.load(MAIN_LIST[cursor].tr_path)
+    mixer.music.load(ACTIVE_LIST[cursor].tr_path)
     mixer.music.play()
 
 
@@ -531,8 +531,12 @@ def startup():
     global MAIN_LIST, PLAYLISTS_LIST, ACTIVE_LIST
     MAIN_LIST = readMainList()
     PLAYLISTS_LIST = readPlaylists()
-    ACTIVE_LIST = MAIN_LIST
-    displayPlaylist(MAIN_LIST)
+    try:
+        ACTIVE_LIST = choosePlaylist(PLAYLISTS_LIST[0].pl_name)
+    except IndexError:
+        ACTIVE_LIST = MAIN_LIST
+
+    displayPlaylist(ACTIVE_LIST)
 
 
 startup()
