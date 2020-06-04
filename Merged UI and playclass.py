@@ -3,6 +3,7 @@ import pygame
 import tkinter as tk
 import os
 import threading
+from tkinter import tix
 
 pygame.init()
 
@@ -65,6 +66,8 @@ program_menu.add_cascade(label='Library', menu=library_menu)
 main_window.config(menu=program_menu)
 
 current_volume = tk.DoubleVar()
+current_volume.set(0.5)
+changed_volume = 0.5
 volume_slider = tk.Scale(main_window, from_=0, to=1, resolution=0.01, orient="horizontal", variable=current_volume, command=Change_Volume(current_volume.get()))
 
 music_library = tk.LabelFrame(main_window, text="Music library")
@@ -96,15 +99,13 @@ pause_button = tk.Button(main_window, text='Pause', width=8, height=1, command=l
 stop_button = tk.Button(main_window, text='Stop', width=8, height=1, command=lambda: Stop_Playback())
 previous_button = tk.Button(main_window, text='Previous', width=8, height=1, command=lambda: Previous_Track())
 next_button = tk.Button(main_window, text='Next', width=8, height=1, command=lambda: Next_Track())
-change_volume_button = tk.Button(main_window, text='Set volume', width=10, height=1, command=lambda: Change_Volume(current_volume.get()))
 
 play_button.grid(column=1, row=3)
 pause_button.grid(column=2, row=3)
 stop_button.grid(column=3, row=3)
 previous_button.grid(column=4, row=3)
 next_button.grid(column=5, row=3)
-volume_slider.grid(column=2, row=2)
-change_volume_button.grid(column=4, row=2)
+volume_slider.grid(column=3, row=2)
 
 main_window.columnconfigure(0, minsize=420)
 main_window.columnconfigure(1, minsize=80)
@@ -120,14 +121,16 @@ main_window.rowconfigure(5, minsize=240)
 
 def Start_Playback():
     global cursor, paused, playback_button_pressed
-    playback_button_pressed = 1
     if paused:
         mixer.music.unpause()
         paused = 0
+        playback_button_pressed = 0
     else:
+        playback_button_pressed = 1
         mixer.music.stop()
         mixer.music.load(ACTIVE_LIST[cursor].tr_path)
         mixer.music.play()
+        playback_button_pressed = 0
 
 
 def Pause_Playback():
@@ -561,9 +564,11 @@ def startup():
     displayPlaylist(ACTIVE_LIST)
 
 def pygameeventloop():
-    global playback_button_pressed
+    global playback_button_pressed, changed_volume, current_volume
     while True:
-
+        if(changed_volume != current_volume.get()):
+            Change_Volume(current_volume.get())
+            changed_volume=current_volume.get()
         for event in pygame.event.get():
             if event.type == SONG_END:
                 if(playback_button_pressed==0):
