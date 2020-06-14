@@ -7,7 +7,7 @@ import csv
 from tkinter import *
 from tkinter.filedialog import askdirectory
 import sys
-# import librosa
+import datetime
 import csv
 from tinytag import TinyTag
 
@@ -28,7 +28,7 @@ current_file_5 = "C:\\Users\\Lenovo PC\\Music\\Fleetwood Mac - The Very Best Of.
 current_path = ''
 FORMATS = ['.mp3', '.wav', '.ogg', '.flac']
 FOLDER_PATH = r'E:\\Python'
-FIELDNAMES = ['name', 'title', 'artist', 'album', 'date', 'genre']
+FIELDNAMES = ['name', 'title', 'artist', 'album', 'date', 'genre', 'duration']
 
 def directory_chooser():
     directory = askdirectory()
@@ -61,6 +61,11 @@ def info(current_file):
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
                 tempf.append(curr_tags[curr_key] + ';')
+            elif key == 'duration':
+                time = mutagen.File(current_file)
+                int_time = int(time.info.length)
+                duration = datetime.timedelta(seconds=int_time)
+                curr_tags[curr_key] = str(duration)
             else:
                 try:
                     curr_tags[curr_key] = str(current_audio[key])
@@ -78,6 +83,11 @@ def info(current_file):
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
                 tempf.append(curr_tags[curr_key] + ';')
+            elif key == 'duration':
+                time = mutagen.File(current_file)
+                int_time = int(time.info.length)
+                duration = datetime.timedelta(seconds=int_time)
+                curr_tags[curr_key] = str(duration)
             else:
                 try:
                     curr_tags[curr_key] = str(current_audio[key])
@@ -95,6 +105,11 @@ def info(current_file):
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
                 tempf.append(curr_tags[curr_key] + ';')
+            elif key == 'duration':
+                current_audio_aux = TinyTag.get(current_file)
+                int_time = int(current_audio_aux.duration)
+                duration = datetime.timedelta(seconds=int_time)
+                curr_tags[curr_key] = str(duration)
             else:
                 try:
                     curr_tags[curr_key] = str(current_audio[key])
@@ -125,6 +140,11 @@ def info(current_file):
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
                 tempf.append(curr_tags[curr_key] + ';')
+            elif key == 'duration':
+                time = mutagen.File(current_file)
+                int_time = int(time.info.length)
+                duration = datetime.timedelta(seconds=int_time)
+                curr_tags[curr_key] = str(duration)
             else:
                 try:
                     curr_tags[curr_key] = str(current_audio[key])
@@ -166,6 +186,11 @@ def update_track(current_file, new_tags):
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
                 tempf.append(curr_tags[curr_key] + ';')
+            elif key == 'duration':
+                time = mutagen.File(current_file)
+                int_time = int(time.info.length)
+                duration = datetime.timedelta(seconds=int_time)
+                curr_tags[curr_key] = str(duration)
             else:
                 current_audio[curr_key] = new_tags[key]
                 current_audio.save()
@@ -178,6 +203,11 @@ def update_track(current_file, new_tags):
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
                 tempf.append(curr_tags[curr_key] + ';')
+            elif key == 'duration':
+                time = mutagen.File(current_file)
+                int_time = int(time.info.length)
+                duration = datetime.timedelta(seconds=int_time)
+                curr_tags[curr_key] = str(duration)
             else:
                 current_audio[curr_key] = new_tags[key]
                 current_audio.save()
@@ -190,6 +220,11 @@ def update_track(current_file, new_tags):
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
                 tempf.append(curr_tags[curr_key] + ';')
+            elif key == 'duration':
+                current_audio_aux = TinyTag.get(current_file)
+                int_time = int(current_audio_aux.duration)
+                duration = datetime.timedelta(seconds=int_time)
+                curr_tags[curr_key] = str(duration)
             else:
                 #current_audio[curr_key] = new_tags[key]
                 #current_audio.save()
@@ -202,6 +237,11 @@ def update_track(current_file, new_tags):
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
                 tempf.append(curr_tags[curr_key] + ';')
+            elif key == 'duration':
+                time = mutagen.File(current_file)
+                int_time = int(time.info.length)
+                duration = datetime.timedelta(seconds=int_time)
+                curr_tags[curr_key] = str(duration)
             else:
                 current_audio[curr_key] = new_tags[key]
                 current_audio.save()
@@ -284,19 +324,13 @@ def add_to_base():
         info(song)
 
 
-new_tags_1 = {'title': 'Oboj Gabriel', 'artist': 'No i co teraz', 'album': 'TeTe', 'date': '2000', 'genre': 'C&G'}
+new_tags_1 = {'title': '123', 'artist': '456', 'album': '789', 'date': '9998', 'genre': 'C&G&Z',}
 
 
 
 #directory_chooser()
 #add_to_base()
-#tester = update_track(current_file, new_tags_1)
-#tester2 = info(current_file)
+#tester = update_track(current_file_4, new_tags_1)
+#tester2 = info(current_file_4)
 #print(tester2)
-
-#artist_info(current_file_5)
-print(artist_info(current_file_5))
-#print(dicography(current_file_5))
-#print(info(current_file_5))
-
 
