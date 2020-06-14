@@ -14,6 +14,11 @@ FORMATS = ['.mp3', '.wav', '.ogg', '.flac']
 cursor = 0
 paused = 0
 playback_button_pressed = 0
+global sellib
+selpl = 0
+coords = []
+dragfromlib=False
+dragfrompl=False
 
 global FOLDER_PATH, MUSIC_PATHS, MAIN_LIST, PLAYLISTS_LIST, ACTIVE_LIST
 FOLDER_PATH = r'C:\\Users\\jasie\\source\\repos\\TeamProject\\TeamProject'
@@ -314,6 +319,7 @@ def readPlaylists():  # READ PLAYLIST NAMES
 
 def displayPlaylist(givenList):  # PRINT PLAYLIST
     id = 0
+    playlist_contents.delete(*playlist_contents.get_children())
     for instance in range(len(givenList)):
         try:
             id+=1
@@ -324,6 +330,31 @@ def displayPlaylist(givenList):  # PRINT PLAYLIST
         except IndexError:
             break
 
+def bDown(event):
+    global sellib
+    tv = event.widget
+    if tv.identify_row(event.y) not in tv.selection():
+        tv.selection_set(tv.identify_row(event.y))
+    sellib = tv.selection()
+
+def bUp(event):
+    global playlist_contents, library_content, sellib
+    tv = event.widget
+    pl_path = FOLDER_PATH + r'\\{}'.format('main.ajr')
+    pl_name = '"All Songs"'
+    ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, library_content.item(sellib, 'text'), ''))
+    displayPlaylist(ACTIVE_LIST)
+
+def bMove(event):
+    tv = event.widget
+    moveto = tv.index(tv.identify_row(event.y))    
+    for s in tv.selection():
+        tv.move(s, '', moveto)
+
+
+library_content.bind("<ButtonPress-1>",bDown)
+library_content.bind("<ButtonRelease-1>",bUp, add='+')
+playlist_contents.bind("<B1-Motion>",bMove, add='+')
 
 # DERIVATIVE FUNCTIONS:
 
