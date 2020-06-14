@@ -3,7 +3,7 @@ import pygame
 import tkinter as tk
 import os
 import threading
-from tkinter import tix
+from tkinter import ttk
 
 pygame.init()
 
@@ -34,65 +34,38 @@ global library_string, playlist_string
 library_string = tk.StringVar()
 playlist_string = tk.StringVar()
 
-file_menu = tk.Menu(program_menu, tearoff=0)
-file_menu.add_command(label='Open')
-file_menu.add_separator()
-file_menu.add_command(label='Add folder')
-
-edit_menu = tk.Menu(program_menu, tearoff=0)
-edit_menu.add_command(label='Undo')
-edit_menu.add_command(label='Redo')
-edit_menu.add_separator()
-edit_menu.add_command(label='Clear')
-edit_menu.add_command(label='Sort')
-
-playback_menu = tk.Menu(program_menu, tearoff=0)
-playback_menu.add_command(label='Play')
-playback_menu.add_command(label='Pause')
-playback_menu.add_command(label='Stop')
-playback_menu.add_command(label='Next track')
-playback_menu.add_command(label='Previous track')
-
-library_menu = tk.Menu(program_menu, tearoff=0)
-library_menu.add_command(label='Search')
-library_menu.add_separator()
-library_menu.add_command(label='Configure')
-
-program_menu.add_cascade(label='File', menu=file_menu)
-program_menu.add_cascade(label='Edit', menu=edit_menu)
-program_menu.add_cascade(label='Playback', menu=playback_menu)
-program_menu.add_cascade(label='Library', menu=library_menu)
-
-main_window.config(menu=program_menu)
-
 current_volume = tk.DoubleVar()
 current_volume.set(0.5)
 changed_volume = 0.5
 volume_slider = tk.Scale(main_window, from_=0, to=1, resolution=0.01, orient="horizontal", variable=current_volume, command=Change_Volume(current_volume.get()))
 
 music_library = tk.LabelFrame(main_window, text="Music library")
-music_library.grid(column=0, row=0, rowspan=3, sticky=tk.NW)
+music_library.grid(column=0, row=0, rowspan=4, sticky=tk.NW)
 
-library_content = tk.Label(music_library, anchor=tk.NW, justify=tk.LEFT, textvariable=library_string, height=32, width=60)
-library_content.grid(column=0, row=1, rowspan=2, sticky=tk.NW)
-
-visualization = tk.LabelFrame(main_window, text="Visualization")
-visualization.grid(column=0, columnspan=7, row=4, rowspan=2, sticky=tk.NW)
-
-visualization_inside = tk.Label(visualization, anchor=tk.NW, justify=tk.LEFT, text=" ", height=15, width=182)
-visualization_inside.grid(column=0, columnspan=7, row=5, sticky=tk.NW)
+library_content = ttk.Treeview(music_library, height=33)
+library_content.column('#0', width=410, minwidth=410, anchor='center')
+library_content.heading('#0', text='All Music', anchor=tk.W)
+library_content.grid(column=0, row=1, rowspan=3, sticky=tk.NW)
 
 playlist_widget = tk.LabelFrame(main_window, text="Playlist")
-playlist_widget.grid(column=1, columnspan=6, row=1, rowspan=1, sticky=tk.NW)
+playlist_widget.grid(column=6, row=0, rowspan=4, sticky=tk.NW)
 
-playlist_contents = tk.Label(playlist_widget, anchor=tk.NW, justify=tk.LEFT, textvariable=playlist_string, height=32, width=80)
-playlist_contents.grid(column=1, columnspan=6, row=1, rowspan=1, sticky=tk.NW)
+playlist_contents = ttk.Treeview(playlist_widget, height=33, columns=('Artist', 'Title', 'Duration'))
+playlist_contents.column('#0', width=20, minwidth=20, anchor='center')
+playlist_contents.heading('#0', text='Pl', anchor=tk.W)
+playlist_contents.column('Artist', width=130, minwidth=130, anchor='center')
+playlist_contents.heading('Artist', text='Artist', anchor=tk.W)
+playlist_contents.column('Title', width=220, minwidth=220, anchor='center')
+playlist_contents.heading('Title', text='Title', anchor=tk.W)
+playlist_contents.column('Duration', width=56, minwidth=56, anchor='center')
+playlist_contents.heading('Duration', text='Duration', anchor=tk.W)
+playlist_contents.grid(column=6, row=1, rowspan=3, sticky=tk.NW)
 
 track_info = tk.LabelFrame(main_window, text="Track details")
-track_info.grid(column=6, row=1, rowspan=2, sticky=tk.NW)
+track_info.grid(column=1, columnspan=6, row=0, rowspan=3, sticky=tk.NW)
 
-track_info_contents = tk.Label(track_info, anchor=tk.NW, justify=tk.LEFT, text="\tFilename\tExample filename.mp3\n\tDuration\t\t4:20\n\tSample rate\t44.1 kHz\n\tChannels\t2\n\tCodec\t\tMP3\n\tBitrate\t\t320kbps", height=32, width=60)
-track_info_contents.grid(column=6, row=1, rowspan=2, sticky=tk.NW)
+track_info_contents = tk.Label(track_info, anchor=tk.NW, justify=tk.LEFT, text="\tFilename\tExample filename.mp3\n\tDuration\t\t4:20\n\tSample rate\t44.1 kHz\n\tChannels\t2\n\tCodec\t\tMP3\n\tBitrate\t\t320kbps", height=38, width=59)
+track_info_contents.grid(column=1, columnspan=6, row=1, rowspan=2, sticky=tk.NW)
 
 play_button = tk.Button(main_window, text='Play', width=8, height=1, command=lambda: Start_Playback())
 pause_button = tk.Button(main_window, text='Pause', width=8, height=1, command=lambda: Pause_Playback())
@@ -114,10 +87,10 @@ main_window.columnconfigure(3, minsize=80)
 main_window.columnconfigure(4, minsize=80)
 main_window.columnconfigure(5, minsize=80)
 main_window.columnconfigure(6, minsize=400)
-main_window.rowconfigure(1, minsize=410)
-main_window.rowconfigure(2, minsize=20)
+main_window.rowconfigure(1, minsize=600)
+main_window.rowconfigure(2, minsize=10)
 main_window.rowconfigure(3, minsize=40)
-main_window.rowconfigure(5, minsize=240)
+
 
 def Start_Playback():
     global cursor, paused, playback_button_pressed
@@ -170,6 +143,47 @@ def Previous_Track():
     mixer.music.stop()
     mixer.music.load(ACTIVE_LIST[cursor].tr_path)
     mixer.music.play()
+
+file_menu = tk.Menu(program_menu, tearoff=0)
+file_menu.add_command(label='Add music path')
+file_menu.add_command(label='Clear music paths')
+file_menu.add_separator()
+file_menu.add_command(label='Exit')
+
+playlist_menu = tk.Menu(program_menu, tearoff=0)
+playlist_menu.add_command(label='New empty')
+playlist_menu.add_command(label='Generate')
+playlist_menu.add_separator()
+playlist_menu.add_command(label='Load')
+playlist_menu.add_command(label='Save')
+playlist_menu.add_separator()
+playlist_menu.add_command(label='Clear')
+playlist_menu.add_command(label='Sort')
+
+library_menu = tk.Menu(program_menu, tearoff=0)
+library_menu.add_command(label='Refresh')
+library_menu.add_separator()
+library_menu.add_command(label='Sort')
+
+playback_menu = tk.Menu(program_menu, tearoff=0)
+playback_menu.add_command(label='Play', command=lambda:Start_Playback())
+playback_menu.add_command(label='Pause', command=lambda:Pause_Playback())
+playback_menu.add_command(label='Stop', command=lambda:Stop_Playback())
+playback_menu.add_command(label='Next track', command=lambda:Next_Track())
+playback_menu.add_command(label='Previous track', command=lambda:Previous_Track())
+
+tag_menu = tk.Menu(program_menu, tearoff=0)
+tag_menu.add_command(label='Add')
+tag_menu.add_command(label='Clear')
+tag_menu.add_command(label='Clear all')
+
+program_menu.add_cascade(label='File', menu=file_menu)
+program_menu.add_cascade(label='Playlist', menu=playlist_menu)
+program_menu.add_cascade(label='Playback', menu=playback_menu)
+program_menu.add_cascade(label='Library', menu=library_menu)
+program_menu.add_cascade(label='Tags', menu=tag_menu)
+
+main_window.config(menu=program_menu)
 
 class PLAYLIST:
     def __init__(self, playlist_filename, playlist_name):
@@ -244,10 +258,10 @@ def readMainList():  # READ "MAIN LIST"
         createList(True)
 
     MAIN_LIST = []
-    temporary_stringing = "\t"
-
+    id = 0
     with open('main.ajr', 'r') as file:  # ADD TRACK
         for line in file:
+            id += 1
             line = line.replace('\n', '')
             if line.startswith('"'):
                 MUSIC_PATH = line.replace('"', '')
@@ -256,7 +270,7 @@ def readMainList():  # READ "MAIN LIST"
                     pl_path = FOLDER_PATH + r'\\{}'.format('main.ajr')
                     pl_name = '"All Songs"'
                     tr_path = MUSIC_PATH + r'\\{}'.format(line)
-                    temporary_stringing = temporary_stringing + "\n\t" + line
+                    library_content.insert('', id, text=line)
                 else:
                     tr_tags = []
                     if not line.startswith('< >'):
@@ -265,8 +279,6 @@ def readMainList():  # READ "MAIN LIST"
                     MAIN_LIST.append(SOUND_FILE(pl_path, pl_name, tr_path, tr_tags))
     file.close()
 
-    global library_string
-    library_string.set(temporary_stringing)
     return MAIN_LIST
 
 
@@ -301,16 +313,14 @@ def readPlaylists():  # READ PLAYLIST NAMES
 
 
 def displayPlaylist(givenList):  # PRINT PLAYLIST
-    temporary_stringing = '\t'
-
+    id = 0
     for instance in range(len(givenList)):
         try:
+            id+=1
             track_filename = givenList[instance].tr_path.split(r'\\')[-1]
             name = '{}'.format(track_filename.replace('.{}'.format(track_filename.split('.')[-1]), ''))
-            temporary_stringing += f'\n\t{name}'
+            playlist_contents.insert('', id, text='', values=('Artist',name,'Duration'))
 
-            global playlist_string
-            playlist_string.set(temporary_stringing)
         except IndexError:
             break
 
@@ -581,5 +591,3 @@ startup()
 threading._start_new_thread(pygameeventloop,())
 
 main_window.mainloop()
-
-
