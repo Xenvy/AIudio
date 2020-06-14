@@ -10,7 +10,7 @@ import sys
 # import librosa
 import csv
 from tinytag import TinyTag
-import beets
+
 import musicbrainzngs as mbz
 
 
@@ -24,6 +24,7 @@ current_file = "E:\\05 Perfect Strangers2.wav"
 current_file_2 = "E:\\04 - Les chants magnetiques IV.flac"
 current_file_3 = "E:\\Gabriel's Oboe.mp3"
 current_file_4 = "E:\\01 - The RobotsOGG.ogg"
+current_file_5 = "C:\\Users\\Lenovo PC\\Music\\Fleetwood Mac - The Very Best Of.. (2CD)[FLAC]\\Fleetwood Mac - The Very Best Of (CD 1)\\The Very Best Of (CD 1)\\16. Big Love (Live, 1997).mp3"
 current_path = ''
 FORMATS = ['.mp3', '.wav', '.ogg', '.flac']
 FOLDER_PATH = r'E:\\Python'
@@ -232,11 +233,48 @@ def update_track(current_file, new_tags):
 
     return curr_tags
 
+def artist_info(current_file): #name/type(Group/Person)/country/Begin/Begin area
+    data = []
+    key = ['name', 'type', 'country','life-span', 'begin-area']
+    mbz.set_useragent("AIudio", "0.1")
+    song = info(current_file)
+    result = mbz.search_artists(artist=song['artist'])
+    describe = result['artist-list'][0]
+    for par in key:
+        if par == 'life-span':
+            try:
+                data.append(describe[par]['begin'])
+            except KeyError:
+                data.append('None')
+        elif par == 'begin-area':
+            try:
+                data.append(describe[par]['name'])
+            except KeyError:
+                data.append('None')
+        else:
+            try:
+                data.append(describe[par])
+            except KeyError:
+                data.append('None')
+    return data
 
 
+def dicography(current_file):
+    data = []
+    mbz.set_useragent("AIudio", "0.1")
+    song = info(current_file)
+    result = mbz.search_artists(artist=song['artist'])
+    describe = result['artist-list'][0]
+    artist_id = describe['id']
+    try:
+        result = mbz.get_artist_by_id(artist_id, includes=["release-groups"], release_type=["album", "ep"])
+    except mbz.WebServiceError as exc:
+        print("Something went wrong with the request: %s" % exc)
+    else:
+        for release_group in result["artist"]["release-group-list"]:
+            data.append(("{title} ({type})".format(title=release_group["title"],type=release_group["type"])))
 
-def update_folder(path):
-    pass
+    return data
 
 def add_to_base():
     list_of_songs = []
@@ -256,6 +294,9 @@ new_tags_1 = {'title': 'Oboj Gabriel', 'artist': 'No i co teraz', 'album': 'TeTe
 #tester2 = info(current_file)
 #print(tester2)
 
-
+#artist_info(current_file_5)
+print(artist_info(current_file_5))
+#print(dicography(current_file_5))
+#print(info(current_file_5))
 
 
