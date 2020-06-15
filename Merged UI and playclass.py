@@ -196,12 +196,38 @@ def Generate_Playlist():
 #   generate_button.pack()
 
 def Load_Playlist():
-    filename = filedialog.askopenfilename()
-#   filename to ścieżka do playlisty, nie wiem jak ją załadować do ACTIVE_LIST
+    global ACTIVE_LIST
+    filename = filedialog.askopenfilename().replace(r'/', r'\\')
+    for instance in range(len(PLAYLISTS_LIST)):
+        if filename == PLAYLISTS_LIST[instance].pl_path:
+            path = PLAYLISTS_LIST[instance].pl_path
+            ACTIVE_LIST = []
+
+            with open(f'{path}', 'r') as file:
+                for line in file:
+                    line = line.replace('\n', '')
+
+                    if not line.startswith('"'):
+                        for instance2 in range(len(MAIN_LIST)):
+                            if line == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
+                                pl_path = filename
+                                pl_name = PLAYLISTS_LIST[instance].pl_name
+                                tr_path = MAIN_LIST[instance2].tr_path.replace(
+                                    MAIN_LIST[instance2].tr_path.split(r'\\')[-1], line)
+                                ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, tr_path, None))
+            file.close()
+            break
+    displayPlaylist(ACTIVE_LIST)
 
 def Save_Playlist():
-    filename = filedialog.asksaveasfilename()
-#   tu tak samo, zwraca tylko ścieżkę do pliku jaki chcesz zapisać
+    path = ACTIVE_LIST[0].pl_path
+
+    with open(f'{path}', 'w') as file:
+        file.write(f'{ACTIVE_LIST[0].pl_name}\n')
+        for instance in range(len(ACTIVE_LIST)):
+            filename = ACTIVE_LIST[instance].tr_path.split(r'\\')[-1]
+            file.write(f'{filename}\n')
+    file.close()
 
 def Add_Tag_To_Track(tag, tree):
     ACTIVE_LIST[playlist_contents.index(playlist_contents.selection())].tr_tags.append(tag)
@@ -272,14 +298,14 @@ main_window.config(menu=program_menu)
 
 class PLAYLIST:
     def __init__(self, playlist_filename, playlist_name):
-        self.pl_filename = playlist_filename
+        self.pl_path = FOLDER_PATH + r'\\{}'.format(playlist_filename)
         self.pl_name = playlist_name
 
 
 class SOUND_FILE(PLAYLIST):
     def __init__(self, playlist_filename, playlist_name, track_path, track_tags):
         super().__init__(playlist_filename, playlist_name)
-        self.pl_filename = playlist_filename
+        self.pl_path = playlist_filename
         self.pl_name = playlist_name
 
         self.tr_path = track_path
@@ -433,7 +459,7 @@ def bUp(event):
 
 def bMove(event):
     tv = event.widget
-    moveto = tv.index(tv.identify_row(event.y))    
+    moveto = tv.index(tv.identify_row(event.y))
     for s in tv.selection():
         tv.move(s, '', moveto)
 
@@ -573,7 +599,7 @@ def choosePlaylist(playlist_name):  # CHANGE PLAYLISTS
     else:
         for instance in range(len(PLAYLISTS_LIST)):
             if playlist_name == PLAYLISTS_LIST[instance].pl_name:
-                path = FOLDER_PATH + r'\\{}'.format(PLAYLISTS_LIST[instance].pl_filename)
+                path = PLAYLISTS_LIST[instance].pl_path
                 activeList = []
 
                 with open(f'{path}', 'r') as file:
@@ -583,7 +609,7 @@ def choosePlaylist(playlist_name):  # CHANGE PLAYLISTS
                         if not line.startswith('"'):
                             for instance2 in range(len(MAIN_LIST)):
                                 if line == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
-                                    pl_path = PLAYLISTS_LIST[instance].pl_filename
+                                    pl_path = PLAYLISTS_LIST[instance].pl_path
                                     pl_name = playlist_name
                                     tr_path = MAIN_LIST[instance2].tr_path.replace(
                                         MAIN_LIST[instance2].tr_path.split(r'\\')[-1], line)
@@ -592,81 +618,16 @@ def choosePlaylist(playlist_name):  # CHANGE PLAYLISTS
                 break
     return activeList
 
-
-def savePlaylist():  # SAVE CHANGES TO PLAYLIST
-    path = FOLDER_PATH + r'\\{}'.format(ACTIVE_LIST[0].pl_filename)
-
-    with open(f'{path}', 'w') as file:
-        file.write(f'{ACTIVE_LIST[0].pl_name}\n')
-        for instance in range(len(ACTIVE_LIST)):
-            filename = ACTIVE_LIST[instance].tr_path.split(r'\\')[-1]
-            file.write(f'{filename}\n')
-    file.close()
-
-
-def addToPlaylist(playlists_filenames, tracks_filenames):  # ADD TO PLAYLIST
-    for filename in playlists_filenames:
-        path = FOLDER_PATH + r'\\{}'.format(filename)
-
-        for filename2 in tracks_filenames:
-            with open(f'{path}', 'r+') as file:
-                for line in file:
-                    if line.startswith('"'):
-                        continue
-                    elif filename2 in line:
-                        break
-                else:
-                    file.write(f'{filename2}\n')
-            file.close()
-
-
 def removeFromPlaylist(file):  # REMOVE FROM PLAYLIST
     for instance in range(len(ACTIVE_LIST)):
         if file.tr_path == ACTIVE_LIST[instance].tr_path:
             ACTIVE_LIST.remove(ACTIVE_LIST[instance])
             break
 
-
 def deletePlaylist(playlists_filenames):  # DELETE PLAYLIST
     for filename in playlists_filenames:
         path = FOLDER_PATH + r'\\{}'.format(filename)
         os.remove(f'{path}')
-
-
-def refresh(complete):  # LOAD PLAYLIST AGAIN
-    global MAIN_LIST, PLAYLISTS_LIST
-    createList(False)
-    MAIN_LIST = readMainList()
-    PLAYLISTS_LIST = readPlaylists()
-
-    if complete:
-        if ACTIVE_LIST[0].pl_name == '"All Songs"':
-            activeList = MAIN_LIST
-
-        else:
-            pl_name = ACTIVE_LIST[0].pl_name
-            activeList = []
-
-            for instance in range(len(PLAYLISTS_LIST)):
-                if pl_name == PLAYLISTS_LIST[instance].pl_name:
-                    path = FOLDER_PATH + r'\\{}'.format(PLAYLISTS_LIST[instance].pl_filename)
-
-                    with open(f'{path}', 'r') as file:
-                        for line in file:
-                            line = line.replace('\n', '')
-
-                            if not line.startswith('"'):
-                                for instance2 in range(len(MAIN_LIST)):
-                                    if line == MAIN_LIST[instance2].tr_path.split(r'\\')[-1]:
-                                        pl_path = PLAYLISTS_LIST[instance].pl_filename
-                                        tr_path = MAIN_LIST[instance2].tr_path.replace(
-                                            MAIN_LIST[instance2].tr_path.split(r'\\')[-1], line)
-                                        activeList.append(SOUND_FILE(pl_path, pl_name, tr_path, None))
-                                        break
-                    file.close()
-                    break
-
-        return activeList
 
 def Remove_From_Playlist(event):
     enum=0
