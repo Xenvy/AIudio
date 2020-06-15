@@ -217,6 +217,10 @@ def Load_Playlist():
                                 ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, tr_path, None))
             file.close()
             break
+    
+    if len(ACTIVE_LIST) == 0:
+        global empty
+        empty = [PLAYLISTS_LIST[instance].pl_path, PLAYLISTS_LIST[instance].pl_name]
     displayPlaylist(ACTIVE_LIST)
 
 def Save_Playlist():
@@ -451,8 +455,13 @@ def bDown(event):
 def bUp(event):
     global playlist_contents, library_content, sellib
     tv = event.widget
-    pl_path = ACTIVE_LIST[0].pl_path
-    pl_name = ACTIVE_LIST[0].pl_name
+    try:
+        pl_path = ACTIVE_LIST[0].pl_path
+        pl_name = ACTIVE_LIST[0].pl_name
+    except IndexError:
+        pl_path = empty[0]
+        pl_name = empty[1]
+        del empty
     if library_content.item(sellib, 'text') != '':
         ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, library_content.item(sellib, 'text'), ''))
         displayPlaylist(ACTIVE_LIST)
