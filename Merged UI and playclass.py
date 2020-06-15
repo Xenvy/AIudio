@@ -164,7 +164,6 @@ def New_Playlist():
     ACTIVE_LIST.clear
     displayPlaylist(ACTIVE_LIST)
 
-tags = []
 
 def Generate_Playlist():
     t=tk.Toplevel(main_window)
@@ -683,12 +682,16 @@ def Remove_From_Playlist2():
         enum += 1
     displayPlaylist(ACTIVE_LIST)
 
+def Refresh_Library():
+    createList(True)
+    readMainList()
+
 playlist_contents.bind("<KeyPress-Delete>", Remove_From_Playlist)
 sort_menu.add_command(label="Alphabetically", command=lambda:sortPlaylist('ALPHA', ACTIVE_LIST))
 sort_menu.add_command(label="By format", command=lambda:sortPlaylist('FORMAT', ACTIVE_LIST))
 sort_menu.add_command(label="By folder", command=lambda:sortPlaylist('FOLDER', ACTIVE_LIST))
 playlist_menu.add_cascade(label='Sort', menu=sort_menu)
-library_menu.add_command(label='Refresh', command=createList(False))
+library_menu.add_command(label='Refresh', command=Refresh_Library)
 popup_menu=tk.Menu(main_window, tearoff=0)
 popup_menu.add_command(label='Remove', command=Remove_From_Playlist2)
 
