@@ -469,7 +469,12 @@ def bUp(event):
         pl_name = empty[1]
 
     if library_content.item(sellib, 'text') != '':
-        ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, library_content.item(sellib, 'text'), ''))
+        for instance in range(len(MAIN_LIST)):
+            if library_content.item(sellib, 'text') == MAIN_LIST[instance].tr_path.split(r'\\')[-1]:
+                tr_path = MAIN_LIST[instance].tr_path
+                ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, tr_path, ''))
+                break
+
         displayPlaylist(ACTIVE_LIST)
 
 def bMove(event):
