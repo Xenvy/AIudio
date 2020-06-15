@@ -451,8 +451,8 @@ def bDown(event):
 def bUp(event):
     global playlist_contents, library_content, sellib
     tv = event.widget
-    pl_path = FOLDER_PATH + r'\\{}'.format('main.ajr')
-    pl_name = '"All Songs"'
+    pl_path = ACTIVE_LIST[0].pl_path
+    pl_name = ACTIVE_LIST[0].pl_name
     if library_content.item(sellib, 'text') != '':
         ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, library_content.item(sellib, 'text'), ''))
         displayPlaylist(ACTIVE_LIST)
