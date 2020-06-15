@@ -217,17 +217,22 @@ def Load_Playlist():
                                 ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, tr_path, None))
             file.close()
             break
-    
     if len(ACTIVE_LIST) == 0:
         global empty
         empty = [PLAYLISTS_LIST[instance].pl_path, PLAYLISTS_LIST[instance].pl_name]
     displayPlaylist(ACTIVE_LIST)
 
 def Save_Playlist():
-    path = ACTIVE_LIST[0].pl_path
+    try:
+        path = ACTIVE_LIST[0].pl_path
+        name = ACTIVE_LIST[0].pl_name
+    except IndexError:
+        global empty
+        path = empty[0]
+        name = empty[1]
 
     with open(f'{path}', 'w') as file:
-        file.write(f'{ACTIVE_LIST[0].pl_name}\n')
+        file.write(f'{name}\n')
         for instance in range(len(ACTIVE_LIST)):
             filename = ACTIVE_LIST[instance].tr_path.split(r'\\')[-1]
             file.write(f'{filename}\n')
@@ -459,9 +464,10 @@ def bUp(event):
         pl_path = ACTIVE_LIST[0].pl_path
         pl_name = ACTIVE_LIST[0].pl_name
     except IndexError:
+        global empty
         pl_path = empty[0]
         pl_name = empty[1]
-        del empty
+
     if library_content.item(sellib, 'text') != '':
         ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, library_content.item(sellib, 'text'), ''))
         displayPlaylist(ACTIVE_LIST)
@@ -625,6 +631,11 @@ def choosePlaylist(playlist_name):  # CHANGE PLAYLISTS
                                     activeList.append(SOUND_FILE(pl_path, pl_name, tr_path, None))
                 file.close()
                 break
+
+        if len(activeList) == 0:
+            global empty
+            empty = [PLAYLISTS_LIST[instance].pl_path, PLAYLISTS_LIST[instance].pl_name]
+
     return activeList
 
 def removeFromPlaylist(file):  # REMOVE FROM PLAYLIST
@@ -640,16 +651,24 @@ def deletePlaylist(playlists_filenames):  # DELETE PLAYLIST
 
 def Remove_From_Playlist(event):
     enum=0
+    global empty
+    empty = [PLAYLISTS_LIST[0].pl_path, PLAYLISTS_LIST[0].pl_name]
+
     for i in playlist_contents.selection():
         removeFromPlaylist(ACTIVE_LIST[playlist_contents.index(i)-enum])
         enum += 1
+
     displayPlaylist(ACTIVE_LIST)
 
 def Remove_From_Playlist2():
     enum=0
+    global empty
+    empty = [PLAYLISTS_LIST[0].pl_path, PLAYLISTS_LIST[0].pl_name]
+
     for i in playlist_contents.selection():
         removeFromPlaylist(ACTIVE_LIST[playlist_contents.index(i)-enum])
         enum += 1
+
     displayPlaylist(ACTIVE_LIST)
 
 def Refresh_Library():
