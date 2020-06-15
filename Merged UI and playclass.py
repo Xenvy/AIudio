@@ -4,6 +4,7 @@ import tkinter as tk
 import os
 import threading
 from tkinter import ttk
+from tkinter import filedialog
 
 pygame.init()
 
@@ -149,26 +150,106 @@ def Previous_Track():
     mixer.music.load(ACTIVE_LIST[cursor].tr_path)
     mixer.music.play()
 
+def Add_Music_Path():
+    dirname = filedialog.askdirectory()
+    MUSIC_PATHS.append(dirname)
+
+def Clear_Music_Paths():
+    MUSIC_PATHS.clear
+
+def Exit():
+    exit()
+
+def New_Playlist():
+    ACTIVE_LIST.clear
+    displayPlaylist(ACTIVE_LIST)
+
+tags = []
+
+def Generate_Playlist():
+    t=tk.Toplevel(main_window)
+    t.title('Generate playlist')
+    t.geometry('300x200-800+400')
+    tag_entry_label=tk.Label(t, text='Search for tags to add:')
+    tag_results=ttk.Treeview(t)
+    tag_results.heading('#0', text='Search results', anchor=tk.W)
+    tags_chosen=ttk.Treeview(t)
+    tags_chosen.heading('#0', text='Tags chosen', anchor=tk.W)
+    tag=tk.StringVar()
+    tag_entry=tk.Entry(t, exportselection=0, textvariable=tag)
+    search_button=tk.Button(t, text='Search', command=lambda:searchForTags(MAIN_LIST, tag, tag_results))
+    add_tag=tk.Button(t, text='Add tag', command=lambda:tags_chosen.insert('', 'end', text=tag_results.item(tag_results.selection, 'text')))
+
+#   JAKO COMMAND FUNKCJA DO GENEROWANIA PLAYLIST
+#   generate_button=tk.Button(t, text='Generate playlist', command=)
+
+#   LISTA TAGÓW DO GENEROWANIA PLAYLISTY
+#   chosen_tags_list=[]
+#   for i in tags_chosen.get_children():
+#       chosen_tags_list.append(tags_chosen.item(i, 'text'))
+
+    tag_entry_label.pack()
+    tag_entry.pack()
+    search_button.pack()
+    tag_results.pack()
+    add_tag.pack()
+    tags_chosen.pack()
+#   generate_button.pack()
+
+def Load_Playlist():
+    filename = filedialog.askopenfilename()
+#   filename to ścieżka do playlisty, nie wiem jak ją załadować do ACTIVE_LIST
+
+def Save_Playlist():
+    filename = filedialog.asksaveasfilename()
+#   tu tak samo, zwraca tylko ścieżkę do pliku jaki chcesz zapisać
+
+def Add_Tag_To_Track(tag, tree):
+    ACTIVE_LIST[playlist_contents.index(playlist_contents.selection())].tr_tags.append(tag)
+    tree.delete(*tree.get_children())
+    for i in ACTIVE_LIST[playlist_contents.index(playlist_contents.selection())].tr_tags:
+        tree.insert('', 'end', text=i)
+
+def Add_Tag():
+    w=tk.Toplevel(main_window)
+    w.title('Add tags')
+    w.geometry('300x200-800+400')
+    tag_to_add_label=tk.Label(w, text='Tag to add:')
+    current_tags=ttk.Treeview(w)
+    current_tags.heading('#0', text='Current tags', anchor=tk.W)
+    tag_added=tk.StringVar()
+    tag_to_add=tk.Entry(w, exportselection=0, textvariable=tag_added)
+    for i in ACTIVE_LIST[playlist_contents.index(playlist_contents.selection())].tr_tags:
+        tree.insert('', 'end', text=i)
+    add_tag_button=tk.Button(w, text='Add tag', command = lambda:Add_Tag_To_Track(tag_added, current_tags))
+    tag_to_add_label.pack()
+    tag_to_add.pack()
+    current_tags.pack()
+
+def Clear_Tags():
+    ACTIVE_LIST[playlist_contents.index(playlist_contents.selection())].tr_tags.clear()
+
+def Clear_All_Tags():
+    for i in ACTIVE_LIST:
+        ACTIVE_LIST[i].tr_tags.clear()
+
 file_menu = tk.Menu(program_menu, tearoff=0)
-file_menu.add_command(label='Add music path')
-file_menu.add_command(label='Clear music paths')
+file_menu.add_command(label='Add music path', command=Add_Music_Path)
+file_menu.add_command(label='Clear music paths', command=Clear_Music_Paths)
 file_menu.add_separator()
-file_menu.add_command(label='Exit')
+file_menu.add_command(label='Exit', command=Exit)
 
 playlist_menu = tk.Menu(program_menu, tearoff=0)
-playlist_menu.add_command(label='New empty')
-playlist_menu.add_command(label='Generate')
+sort_menu = tk.Menu(playlist_menu, tearoff=0)
+playlist_menu.add_command(label='New empty', command=New_Playlist)
+playlist_menu.add_command(label='Generate', command=Generate_Playlist)
 playlist_menu.add_separator()
-playlist_menu.add_command(label='Load')
-playlist_menu.add_command(label='Save')
+playlist_menu.add_command(label='Load', command=Load_Playlist)
+playlist_menu.add_command(label='Save', command=Save_Playlist)
 playlist_menu.add_separator()
-playlist_menu.add_command(label='Clear')
-playlist_menu.add_command(label='Sort')
+playlist_menu.add_command(label='Clear', command=New_Playlist)
 
 library_menu = tk.Menu(program_menu, tearoff=0)
-library_menu.add_command(label='Refresh')
-library_menu.add_separator()
-library_menu.add_command(label='Sort')
 
 playback_menu = tk.Menu(program_menu, tearoff=0)
 playback_menu.add_command(label='Play', command=lambda:Start_Playback())
@@ -178,9 +259,9 @@ playback_menu.add_command(label='Next track', command=lambda:Next_Track())
 playback_menu.add_command(label='Previous track', command=lambda:Previous_Track())
 
 tag_menu = tk.Menu(program_menu, tearoff=0)
-tag_menu.add_command(label='Add')
-tag_menu.add_command(label='Clear')
-tag_menu.add_command(label='Clear all')
+tag_menu.add_command(label='Add', command=Add_Tag)
+tag_menu.add_command(label='Clear', command=Clear_Tags)
+tag_menu.add_command(label='Clear all', command=Clear_All_Tags)
 
 program_menu.add_cascade(label='File', menu=file_menu)
 program_menu.add_cascade(label='Playlist', menu=playlist_menu)
@@ -210,7 +291,7 @@ class SOUND_FILE(PLAYLIST):
 
 def createList(first):  # NEW "MAIN LIST"
     open(FOLDER_PATH + r'\\{}'.format('main_raw.ajr'), 'w')
-
+    library_content.delete(*library_content.get_children())
     for path in range(len(MUSIC_PATHS)):
         fileNames = os.listdir(MUSIC_PATHS[path])
 
@@ -293,13 +374,18 @@ def readTags(line):  # READ TAGS
     return line
 
 
-def searchForTags(inList, toFind):  # SEARCH ENGINE
+def searchForTags(inList, toFind, tree):  # SEARCH ENGINE
+    global tags
+    tree.delete(*tree.get_children())
     results = []
-
+    id = 0
     for instance in range(len(inList)):
         if set(toFind).issubset(inList[instance].tr_tags):
             results.append(inList[instance])
-    return results
+    tags = results
+    for i in results:
+        id += 1
+        tree.insert('', id, text=i)
 
 
 def readPlaylists():  # READ PLAYLIST NAMES
@@ -342,8 +428,9 @@ def bUp(event):
     tv = event.widget
     pl_path = FOLDER_PATH + r'\\{}'.format('main.ajr')
     pl_name = '"All Songs"'
-    ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, library_content.item(sellib, 'text'), ''))
-    displayPlaylist(ACTIVE_LIST)
+    if library_content.item(sellib, 'text') != '':
+        ACTIVE_LIST.append(SOUND_FILE(pl_path, pl_name, library_content.item(sellib, 'text'), ''))
+        displayPlaylist(ACTIVE_LIST)
 
 def bMove(event):
     tv = event.widget
@@ -392,7 +479,8 @@ def sortPlaylist(how, playlist):  # SORT LIST
         MAIN_LIST = readMainList()
         sortedPlaylist = MAIN_LIST
 
-    return sortedPlaylist
+    playlist = sortedPlaylist
+    displayPlaylist(playlist)
 
 
 def findTags():  # FIND NEW TAGS ON THE INTERNET
@@ -533,22 +621,11 @@ def addToPlaylist(playlists_filenames, tracks_filenames):  # ADD TO PLAYLIST
             file.close()
 
 
-def removeFromPlaylist(playlist_filename, tracks_filenames):  # REMOVE FROM PLAYLIST
-    path = FOLDER_PATH + r'\\{}'.format(playlist_filename)
-
-    with open(f'{path}', 'r') as file:
-        file_lines = file.readlines()
-    file.close()
-
-    for filename in tracks_filenames:
-        for line in file_lines:
-            if line.replace('\n', '') == filename:
-                file_lines.remove(line)
-
-    with open(f'{path}', 'w') as file:
-        for line in file_lines:
-            file.write(line)
-    file.close()
+def removeFromPlaylist(file):  # REMOVE FROM PLAYLIST
+    for instance in range(len(ACTIVE_LIST)):
+        if file.tr_path == ACTIVE_LIST[instance].tr_path:
+            ACTIVE_LIST.remove(ACTIVE_LIST[instance])
+            break
 
 
 def deletePlaylist(playlists_filenames):  # DELETE PLAYLIST
@@ -592,6 +669,36 @@ def refresh(complete):  # LOAD PLAYLIST AGAIN
 
         return activeList
 
+def Remove_From_Playlist(event):
+    enum=0
+    for i in playlist_contents.selection():
+        removeFromPlaylist(ACTIVE_LIST[playlist_contents.index(i)-enum])
+        enum += 1
+    displayPlaylist(ACTIVE_LIST)
+
+def Remove_From_Playlist2():
+    enum=0
+    for i in playlist_contents.selection():
+        removeFromPlaylist(ACTIVE_LIST[playlist_contents.index(i)-enum])
+        enum += 1
+    displayPlaylist(ACTIVE_LIST)
+
+playlist_contents.bind("<KeyPress-Delete>", Remove_From_Playlist)
+sort_menu.add_command(label="Alphabetically", command=lambda:sortPlaylist('ALPHA', ACTIVE_LIST))
+sort_menu.add_command(label="By format", command=lambda:sortPlaylist('FORMAT', ACTIVE_LIST))
+sort_menu.add_command(label="By folder", command=lambda:sortPlaylist('FOLDER', ACTIVE_LIST))
+playlist_menu.add_cascade(label='Sort', menu=sort_menu)
+library_menu.add_command(label='Refresh', command=createList(False))
+popup_menu=tk.Menu(main_window, tearoff=0)
+popup_menu.add_command(label='Remove', command=Remove_From_Playlist2)
+
+def Context_Menu(event):
+    try:
+        popup_menu.tk_popup(event.x_root, event.y_root)
+    finally:
+        popup_menu.grab_release()
+
+playlist_contents.bind("<Button-3>", Context_Menu)
 
 def startup():
     global MAIN_LIST, PLAYLISTS_LIST, ACTIVE_LIST
