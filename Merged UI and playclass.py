@@ -652,7 +652,7 @@ def deletePlaylist(playlists_filenames):  # DELETE PLAYLIST
 def Remove_From_Playlist(event):
     enum=0
     global empty
-    empty = [PLAYLISTS_LIST[0].pl_path, PLAYLISTS_LIST[0].pl_name]
+    empty = [ACTIVE_LIST[0].pl_path, ACTIVE_LIST[0].pl_name]
 
     for i in playlist_contents.selection():
         removeFromPlaylist(ACTIVE_LIST[playlist_contents.index(i)-enum])
@@ -663,7 +663,7 @@ def Remove_From_Playlist(event):
 def Remove_From_Playlist2():
     enum=0
     global empty
-    empty = [PLAYLISTS_LIST[0].pl_path, PLAYLISTS_LIST[0].pl_name]
+    empty = [ACTIVE_LIST[0].pl_path, ACTIVE_LIST[0].pl_name]
 
     for i in playlist_contents.selection():
         removeFromPlaylist(ACTIVE_LIST[playlist_contents.index(i)-enum])
