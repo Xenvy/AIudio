@@ -53,14 +53,12 @@ def make_base():
 
 def info(current_file):
     curr_tags = {}
-    tempf = []
     if current_file.endswith('.flac'):
         current_audio = FLAC(current_file)
         for key in FIELDNAMES:
             curr_key = key.strip('\'')
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
-                tempf.append(curr_tags[curr_key] + ';')
             elif key == 'duration':
                 time = mutagen.File(current_file)
                 int_time = int(time.info.length)
@@ -69,20 +67,16 @@ def info(current_file):
             else:
                 try:
                     curr_tags[curr_key] = str(current_audio[key])
-                    tempf.append(curr_tags[curr_key] + ';')
                 except KeyError:
                     curr_tags[curr_key] = "None"
-                    tempf.append(curr_tags[curr_key] + ';')
                 except TypeError:
                     curr_tags[curr_key] = "None"
-                    tempf.append(curr_tags[curr_key] + ';')
     elif current_file.endswith('.mp3'):
         current_audio = EasyID3(current_file)
         for key in FIELDNAMES:
             curr_key = key.strip('\'')
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
-                tempf.append(curr_tags[curr_key] + ';')
             elif key == 'duration':
                 time = mutagen.File(current_file)
                 int_time = int(time.info.length)
@@ -91,20 +85,16 @@ def info(current_file):
             else:
                 try:
                     curr_tags[curr_key] = str(current_audio[key])
-                    tempf.append(curr_tags[curr_key] + ';')
                 except KeyError:
                     curr_tags[curr_key] = "None"
-                    tempf.append(curr_tags[curr_key] + ';')
                 except TypeError:
                     curr_tags[curr_key] = "None"
-                    tempf.append(curr_tags[curr_key] + ';')
     elif current_file.endswith('.wav'):
         current_audio = mutagen.File(current_file)
         for key in FIELDNAMES:
             curr_key = key.strip('\'')
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
-                tempf.append(curr_tags[curr_key] + ';')
             elif key == 'duration':
                 current_audio_aux = TinyTag.get(current_file)
                 int_time = int(current_audio_aux.duration)
@@ -113,7 +103,6 @@ def info(current_file):
             else:
                 try:
                     curr_tags[curr_key] = str(current_audio[key])
-                    tempf.append(curr_tags[curr_key] + ';')
                 except TypeError:
                     try:
                         current_audio_aux = TinyTag.get(current_file)
@@ -129,17 +118,14 @@ def info(current_file):
                             curr_tags[curr_key] = current_audio_aux.genre
                     except KeyError:
                         curr_tags[curr_key] = "None"
-                        tempf.append(curr_tags[curr_key] + ';')
                     except TypeError:
                         curr_tags[curr_key] = "None"
-                        tempf.append(curr_tags[curr_key] + ';')
     elif current_file.endswith('.ogg'):
         current_audio = mutagen.File(current_file)
         for key in FIELDNAMES:
             curr_key = key.strip('\'')
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
-                tempf.append(curr_tags[curr_key] + ';')
             elif key == 'duration':
                 time = mutagen.File(current_file)
                 int_time = int(time.info.length)
@@ -148,13 +134,10 @@ def info(current_file):
             else:
                 try:
                     curr_tags[curr_key] = str(current_audio[key])
-                    tempf.append(curr_tags[curr_key] + ';')
                 except KeyError:
                     curr_tags[curr_key] = "None"
-                    tempf.append(curr_tags[curr_key] + ';')
                 except TypeError:
                     curr_tags[curr_key] = "None"
-                    tempf.append(curr_tags[curr_key] + ';')
     temp_path = FOLDER_PATH + r'\\{}'.format('tags_base.csv')
     flag = 0
     if os.path.exists(temp_path):
@@ -178,14 +161,12 @@ def info(current_file):
 
 def update_track(current_file, new_tags):
     curr_tags = {}
-    tempf = []
     if current_file.endswith('.flac'):
         current_audio = FLAC(current_file)
         for key in FIELDNAMES:
             curr_key = key.strip('\'')
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
-                tempf.append(curr_tags[curr_key] + ';')
             elif key == 'duration':
                 time = mutagen.File(current_file)
                 int_time = int(time.info.length)
@@ -195,14 +176,12 @@ def update_track(current_file, new_tags):
                 current_audio[curr_key] = new_tags[key]
                 current_audio.save()
                 curr_tags[curr_key] = str(new_tags[key])
-                tempf.append(curr_tags[curr_key] + ';')
     elif current_file.endswith('.mp3'):
         current_audio = EasyID3(current_file)
         for key in FIELDNAMES:
             curr_key = key.strip('\'')
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
-                tempf.append(curr_tags[curr_key] + ';')
             elif key == 'duration':
                 time = mutagen.File(current_file)
                 int_time = int(time.info.length)
@@ -212,31 +191,25 @@ def update_track(current_file, new_tags):
                 current_audio[curr_key] = new_tags[key]
                 current_audio.save()
                 curr_tags[curr_key] = str(new_tags[key])
-                tempf.append(curr_tags[curr_key] + ';')
     elif current_file.endswith('.wav'):
         current_audio = mutagen.File(current_file)
         for key in FIELDNAMES:
             curr_key = key.strip('\'')
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
-                tempf.append(curr_tags[curr_key] + ';')
             elif key == 'duration':
                 current_audio_aux = TinyTag.get(current_file)
                 int_time = int(current_audio_aux.duration)
                 duration = datetime.timedelta(seconds=int_time)
                 curr_tags[curr_key] = str(duration)
             else:
-                #current_audio[curr_key] = new_tags[key]
-                #current_audio.save()
                 curr_tags[curr_key] = str(new_tags[key])
-                tempf.append(curr_tags[curr_key] + ';')
     elif current_file.endswith('.ogg'):
         current_audio = mutagen.File(current_file)
         for key in FIELDNAMES:
             curr_key = key.strip('\'')
             if key == 'name':
                 curr_tags[curr_key] = str(current_file)
-                tempf.append(curr_tags[curr_key] + ';')
             elif key == 'duration':
                 time = mutagen.File(current_file)
                 int_time = int(time.info.length)
@@ -246,19 +219,22 @@ def update_track(current_file, new_tags):
                 current_audio[curr_key] = new_tags[key]
                 current_audio.save()
                 curr_tags[curr_key] = str(new_tags[key])
-                tempf.append(curr_tags[curr_key] + ';')
     temp_path = FOLDER_PATH + r'\\{}'.format('tags_base.csv')
     templist = []
+    point = 0
     if os.path.exists(temp_path):
         with open(temp_path, 'r') as csv_file:
             csv_reader = csv.DictReader(csv_file, fieldnames=FIELDNAMES, delimiter=',')
             for row in csv_reader:
-                if row['name'] == curr_tags['name']:
-                    templist.append((curr_tags))
-                elif row['name'] == 'name;title;artist;album;date;genre':
+                if point == 0:
                     pass
+                    point += 1
+                elif row['name'] == curr_tags['name']:
+                    templist.append((curr_tags))
+
                 else:
                     templist.append((row))
+
         os.remove(temp_path)
         make_base()
         with open(temp_path, 'a') as csv_file:
@@ -309,7 +285,7 @@ def dicography(current_file):
     try:
         result = mbz.get_artist_by_id(artist_id, includes=["release-groups"], release_type=["album", "ep"])
     except mbz.WebServiceError as exc:
-        print("Something went wrong with the request: %s" % exc)
+        print("Something went wrong with connection")
     else:
         for release_group in result["artist"]["release-group-list"]:
             data.append(("{title} ({type})".format(title=release_group["title"],type=release_group["type"])))
@@ -323,14 +299,50 @@ def add_to_base():
     for song in list_of_songs:
         info(song)
 
+def addTag():  # ADD NEW TAGS
+    copy_base = []
+    copy_main = []
+    curr_file_path = ''
 
-new_tags_1 = {'title': '123', 'artist': '456', 'album': '789', 'date': '9998', 'genre': 'C&G&Z',}
+    with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'r') as file:
+        for line in file:
+            contents = file.read()
+            if contents.startswith("\""): #contents[:-1] == ("\""):
+                if contents != curr_file_path:
+                    curr_file_path = contents
+            elif contents.startswith("<"): #contents[:-1] == ("\""):
+                continue
+            else:
+                copy_main.append(curr_file_path+contents)
+
+    file.close()
+
+    if os.path.exists(FOLDER_PATH + r'\\{}'.format('tags_base.csv')):
+        with open(FOLDER_PATH + r'\\{}'.format('tags_base.csv'), 'r') as csv_file:
+            point = 0
+            csv_reader = csv.DictReader(csv_file, fieldnames=FIELDNAMES, delimiter=',')
+            for row in csv_reader:
+                if point == 0:
+                    pass
+                    point += 1
+                else:
+                    #index = copy_main.index(row['name'])
+                    if row['name'].split('\\')[:-1] != curr_file_path:
+                        curr_file_path = row['name'].split('\\')[:-1]
+                        copy_base.append(str(row['name'].split('\\')[:-1]).strip("[\'\"\"\']")+"\\")
+                    copy_base.append(str(row['name'].split('\\')[-1:]).strip("[\'\"\"\']"))
+                    copy_base.append("< {artist}:0 {album}:0 {date}:0 {genre}:0 {duration}:0 >".format(artist=row['artist'], album=row['album'], date=row['date'], genre=row['genre'], duration=row['duration']))
+
+
+new_tags_1 = {'title': 'ghdhrtcvrcetwcgrtgcwt', 'artist': 'Roxy music', 'album': 'PASSSAT', 'date': '1.9', 'genre': 'TDI',}
 
 
 
 #directory_chooser()
 #add_to_base()
 #tester = update_track(current_file_4, new_tags_1)
-#tester2 = info(current_file_4)
+#tester2 = info(current_file_5)
 #print(tester2)
 
+#print(artist_info(current_file_4))
+#print(dicography(current_file_4))
