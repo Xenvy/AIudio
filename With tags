@@ -29,8 +29,8 @@ dragfromlib=False
 dragfrompl=False
 
 global FOLDER_PATH, MUSIC_PATHS, MAIN_LIST, PLAYLISTS_LIST, ACTIVE_LIST, FIELDNAMES
-FOLDER_PATH = r'E:\\test'
-MUSIC_PATHS = [r'E:\\test']
+FOLDER_PATH = r'E:\\test\\'
+MUSIC_PATHS = [r'E:\\test\\']
 MAIN_LIST = PLAYLISTS_LIST = ACTIVE_LIST = []
 FIELDNAMES = ['name', 'title', 'artist', 'album', 'date', 'genre', 'duration']
 
@@ -549,7 +549,7 @@ def findTags():  # FIND NEW TAGS ON THE INTERNET
     MAIN_LIST[3].tr_tags = ['3', '1', '2']
 
 
-def addTagToMain():
+def addTagsToMain():
     copy_base = []
     copy_main = []
     curr_file_path = ''
@@ -557,14 +557,13 @@ def addTagToMain():
     with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'r') as file:
         for line in file:
             contents = file.read()
-            if contents.startswith("\""): #contents[:-1] == ("\""):
+            if contents.startswith("\""):
                 if contents != curr_file_path:
                     curr_file_path = contents
-            elif contents.startswith("<"): #contents[:-1] == ("\""):
+            elif contents.startswith("<"):
                 continue
             else:
                 copy_main.append(curr_file_path+contents)
-
     file.close()
 
     if os.path.exists(FOLDER_PATH + r'\\{}'.format('tags_base.csv')):
@@ -578,9 +577,15 @@ def addTagToMain():
                 else:
                     if row['name'].split('\\')[:-1] != curr_file_path:
                         curr_file_path = row['name'].split('\\')[:-1]
-                        copy_base.append(str(row['name'].split('\\')[:-1]).strip("[\'\"\"\']")+"\\")
+                        copy_base.append(((str(row['name'].split('\\')[:-1])).replace("', '","\\")).strip("[\'\"\"\']"))
                     copy_base.append(str(row['name'].split('\\')[-1:]).strip("[\'\"\"\']"))
                     copy_base.append("< {artist}:0 {album}:0 {date}:0 {genre}:0 {duration}:0 >".format(artist=row['artist'], album=row['album'], date=row['date'], genre=row['genre'], duration=row['duration']))
+
+    with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'w') as file:
+        for i in copy_base:
+            print(i)
+            file.write(i+"\n")
+    file.close()
 
 def addTag(tracks_filenames, tags, indicator):  # ADD NEW TAGS
     with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'r') as file:
@@ -719,6 +724,7 @@ def Remove_From_Playlist2():
 
 def Refresh_Library():
     createList(True)
+    addTagsToMain()
     readMainList()
 
 playlist_contents.bind("<KeyPress-Delete>", Remove_From_Playlist)
@@ -746,6 +752,8 @@ def startup():
         ACTIVE_LIST = choosePlaylist(PLAYLISTS_LIST[0].pl_name)
     except IndexError:
         ACTIVE_LIST = MAIN_LIST
+
+    #addTagsToMain()
 
     for song in MAIN_LIST:
         info(song.tr_path)
