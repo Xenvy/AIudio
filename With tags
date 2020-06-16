@@ -28,11 +28,11 @@ coords = []
 dragfromlib=False
 dragfrompl=False
 
-global FOLDER_PATH, MUSIC_PATHS, MAIN_LIST, PLAYLISTS_LIST, ACTIVE_LIST, FIELDNAMES
+global FOLDER_PATH, MUSIC_PATHS, MAIN_LIST, PLAYLISTS_LIST, FIELDNAMES, ACTIVE_LIST
 FOLDER_PATH = r'E:\\test\\'
 MUSIC_PATHS = [r'E:\\test\\']
-MAIN_LIST = PLAYLISTS_LIST = ACTIVE_LIST = []
 FIELDNAMES = ['name', 'title', 'artist', 'album', 'date', 'genre', 'duration']
+MAIN_LIST = PLAYLISTS_LIST = ACTIVE_LIST = []
 
 def Change_Volume(current_volume):
     mixer.music.set_volume(current_volume)
@@ -190,7 +190,6 @@ def Generate_Playlist():
 #   JAKO COMMAND FUNKCJA DO GENEROWANIA PLAYLIST
 #   generate_button=tk.Button(t, text='Generate playlist', command=)
 
-#   LISTA TAGÓW DO GENEROWANIA PLAYLISTY
 #   chosen_tags_list=[]
 #   for i in tags_chosen.get_children():
 #       chosen_tags_list.append(tags_chosen.item(i, 'text'))
@@ -536,56 +535,28 @@ def sortPlaylist(how, playlist):  # SORT LIST
     displayPlaylist(playlist)
 
 
-def findTags():  # FIND NEW TAGS ON THE INTERNET
-    # for instance in range(len(MAIN_LIST)):
-    # tags = ## DOWNLOAD TAGS
-    # addTag([MAIN_LIST[instance].tr_path.split(r'\\')[-1]], tags, 0)
-
-    # SIMULATED TAGS
-
-    MAIN_LIST[0].tr_tags = ['2']
-    MAIN_LIST[1].tr_tags = ['1', '2']
-    MAIN_LIST[2].tr_tags = ['3']
-    MAIN_LIST[3].tr_tags = ['3', '1', '2']
-
-
 def addTagsToMain():
-    copy_base = []
-    copy_main = []
-    curr_file_path = ''
-
-    with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'r') as file:
-        for line in file:
-            contents = file.read()
-            if contents.startswith("\""):
-                if contents != curr_file_path:
-                    curr_file_path = contents
-            elif contents.startswith("<"):
-                continue
-            else:
-                copy_main.append(curr_file_path+contents)
-    file.close()
-
     if os.path.exists(FOLDER_PATH + r'\\{}'.format('tags_base.csv')):
         with open(FOLDER_PATH + r'\\{}'.format('tags_base.csv'), 'r') as csv_file:
-            point = 0
+            instance = -1
             csv_reader = csv.DictReader(csv_file, fieldnames=FIELDNAMES, delimiter=',')
             for row in csv_reader:
-                if point == 0:
-                    pass
-                    point += 1
-                else:
-                    if row['name'].split('\\')[:-1] != curr_file_path:
-                        curr_file_path = row['name'].split('\\')[:-1]
-                        copy_base.append(((str(row['name'].split('\\')[:-1])).replace("', '","\\")).strip("[\'\"\"\']"))
-                    copy_base.append(str(row['name'].split('\\')[-1:]).strip("[\'\"\"\']"))
-                    copy_base.append("< {artist}:0 {album}:0 {date}:0 {genre}:0 {duration}:0 >".format(artist=row['artist'], album=row['album'], date=row['date'], genre=row['genre'], duration=row['duration']))
+                tags = [row['artist'], row['album'], row['date'], row['genre'], row['duration']]
+                for instance2 in range(len(tags)):
+                    try :
+                        if tags[instance2].startswith('['):
+                            tags[instance2] = tags[instance2][2: -2]
 
-    with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'w') as file:
-        for i in copy_base:
-            print(i)
-            file.write(i+"\n")
-    file.close()
+                    except AttributeError:
+                        pass
+
+                tags = list(filter(None, tags))
+                try:
+                    addTag([MAIN_LIST[instance].tr_path.split(r'\\')[-1]], tags, 1)
+                except IndexError:
+                    break
+
+                instance += 1
 
 def addTag(tracks_filenames, tags, indicator):  # ADD NEW TAGS
     with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'r') as file:
@@ -744,36 +715,6 @@ def Context_Menu(event):
 
 playlist_contents.bind("<Button-3>", Context_Menu)
 
-def startup():
-    global MAIN_LIST, PLAYLISTS_LIST, ACTIVE_LIST
-    MAIN_LIST = readMainList()
-    PLAYLISTS_LIST = readPlaylists()
-    try:
-        ACTIVE_LIST = choosePlaylist(PLAYLISTS_LIST[0].pl_name)
-    except IndexError:
-        ACTIVE_LIST = MAIN_LIST
-
-    #addTagsToMain()
-
-    for song in MAIN_LIST:
-        info(song.tr_path)
-
-    displayPlaylist(ACTIVE_LIST)
-
-def pygameeventloop():
-    global playback_button_pressed, changed_volume, current_volume
-    while True:
-        if(changed_volume != current_volume.get()):
-            Change_Volume(current_volume.get())
-            changed_volume=current_volume.get()
-        for event in pygame.event.get():
-            if event.type == SONG_END:
-                if(playback_button_pressed==0):
-                    Next_Track()
-                else:
-                    playback_button_pressed = 0
-
-
 def make_base():
     with open(FOLDER_PATH + r'\\{}'.format('tags_base.csv'), 'w', newline='') as csv_file:
         csv_writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES, delimiter=';')
@@ -880,7 +821,6 @@ def info(current_file):
                 csv_writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES, delimiter=',')
                 csv_writer.writerow(curr_tags)
     else:
-        make_base()
         with open(temp_path, 'a') as csv_file:
             csv_writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES, delimiter=',')
             csv_writer.writerow(curr_tags)
@@ -964,13 +904,11 @@ def update_track(current_file, new_tags):
                     templist.append((row))
 
         os.remove(temp_path)
-        make_base()
         with open(temp_path, 'a') as csv_file:
             csv_writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES, delimiter=',')
             for row in templist:
                 csv_writer.writerow(row)
     else:
-        make_base()
         with open(temp_path, 'a') as csv_file:
             csv_writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES, delimiter=',')
             csv_writer.writerow(curr_tags)
@@ -1018,6 +956,36 @@ def dicography(current_file):
             data.append(("{title} ({type})".format(title=release_group["title"],type=release_group["type"])))
 
     return data
+
+def startup():
+    global MAIN_LIST, PLAYLISTS_LIST, ACTIVE_LIST
+    MAIN_LIST = readMainList()
+    PLAYLISTS_LIST = readPlaylists()
+    try:
+        ACTIVE_LIST = choosePlaylist(PLAYLISTS_LIST[0].pl_name)
+    except IndexError:
+        ACTIVE_LIST = MAIN_LIST
+
+    make_base() ## Obydwie funkcje do umieszczenia pod jedną opcją ("Otaguj")
+    addTagsToMain() ## To też
+
+    for song in MAIN_LIST:
+        info(song.tr_path)
+
+    displayPlaylist(ACTIVE_LIST)
+
+def pygameeventloop():
+    global playback_button_pressed, changed_volume, current_volume
+    while True:
+        if(changed_volume != current_volume.get()):
+            Change_Volume(current_volume.get())
+            changed_volume=current_volume.get()
+        for event in pygame.event.get():
+            if event.type == SONG_END:
+                if(playback_button_pressed==0):
+                    Next_Track()
+                else:
+                    playback_button_pressed = 0
 
 startup()
 
