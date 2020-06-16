@@ -299,7 +299,7 @@ def add_to_base():
     for song in list_of_songs:
         info(song)
 
-def addTag():  # ADD NEW TAGS
+def addTagsToMain():
     copy_base = []
     copy_main = []
     curr_file_path = ''
@@ -307,14 +307,13 @@ def addTag():  # ADD NEW TAGS
     with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'r') as file:
         for line in file:
             contents = file.read()
-            if contents.startswith("\""): #contents[:-1] == ("\""):
+            if contents.startswith("\""):
                 if contents != curr_file_path:
                     curr_file_path = contents
-            elif contents.startswith("<"): #contents[:-1] == ("\""):
+            elif contents.startswith("<"):
                 continue
             else:
                 copy_main.append(curr_file_path+contents)
-
     file.close()
 
     if os.path.exists(FOLDER_PATH + r'\\{}'.format('tags_base.csv')):
@@ -326,12 +325,17 @@ def addTag():  # ADD NEW TAGS
                     pass
                     point += 1
                 else:
-                    #index = copy_main.index(row['name'])
                     if row['name'].split('\\')[:-1] != curr_file_path:
                         curr_file_path = row['name'].split('\\')[:-1]
-                        copy_base.append(str(row['name'].split('\\')[:-1]).strip("[\'\"\"\']")+"\\")
+                        copy_base.append(((str(row['name'].split('\\')[:-1])).replace("', '","\\")).strip("[\'\"\"\']"))
                     copy_base.append(str(row['name'].split('\\')[-1:]).strip("[\'\"\"\']"))
                     copy_base.append("< {artist}:0 {album}:0 {date}:0 {genre}:0 {duration}:0 >".format(artist=row['artist'], album=row['album'], date=row['date'], genre=row['genre'], duration=row['duration']))
+
+    with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'w') as file:
+        for i in copy_base:
+            print(i)
+            file.write(i+"\n")
+    file.close()
 
 
 new_tags_1 = {'title': 'ghdhrtcvrcetwcgrtgcwt', 'artist': 'Roxy music', 'album': 'PASSSAT', 'date': '1.9', 'genre': 'TDI',}
