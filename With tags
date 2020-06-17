@@ -402,7 +402,7 @@ def readMainList():  # READ "MAIN LIST"
                     tr_tags = []
                     if not line.startswith('< >'):
                         for tag in readTags(line):
-                            tr_tags.append(tag.split(':')[0])
+                            tr_tags.append(tag.split(';')[0])
                     MAIN_LIST.append(SOUND_FILE(pl_path, pl_name, tr_path, tr_tags))
     file.close()
 
@@ -416,13 +416,14 @@ def readTags(line):  # READ TAGS
 
 
 def searchForTags(inList, toFind, tree):  # SEARCH ENGINE
+    toFind = [toFind.get()]
     global tags
     tree.delete(*tree.get_children())
     results = []
     id = 0
     for instance in range(len(inList)):
         if set(toFind).issubset(inList[instance].tr_tags):
-            results.append(inList[instance])
+            results.append(inList[instance].tr_path.split(r'\\')[-1])
     tags = results
     for i in results:
         id += 1
@@ -543,9 +544,9 @@ def addTagsToMain():
             for row in csv_reader:
                 tags = [row['artist'], row['album'], row['date'], row['genre'], row['duration']]
                 for instance2 in range(len(tags)):
-                    try :
+                    try:
                         if tags[instance2].startswith('['):
-                            tags[instance2] = tags[instance2][2: -2]
+                            tags[instance2] = tags[instance2][2: -2].upper().replace(' ', '_')
 
                     except AttributeError:
                         pass
@@ -553,10 +554,9 @@ def addTagsToMain():
                 tags = list(filter(None, tags))
                 try:
                     addTag([MAIN_LIST[instance].tr_path.split(r'\\')[-1]], tags, 1)
+                    instance += 1
                 except IndexError:
                     break
-
-                instance += 1
 
 def addTag(tracks_filenames, tags, indicator):  # ADD NEW TAGS
     with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'r') as file:
@@ -567,8 +567,8 @@ def addTag(tracks_filenames, tags, indicator):  # ADD NEW TAGS
         for instance in range(len(contents)):
             if contents[instance].replace('\n', '') == filename:
                 for tag in tags:
-                    if f'{tag}:' not in contents[instance + 1]:
-                        contents[instance + 1] = contents[instance + 1].replace('>', f'{tag}:{indicator} >')
+                    if f'{tag};' not in contents[instance + 1]:
+                        contents[instance + 1] = contents[instance + 1].replace('>', f'{tag};{indicator} >')
 
     with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'w') as file:
         file.writelines(contents)
@@ -584,47 +584,28 @@ def removeTag(tracks_filenames, tags):  # REMOVE TAGS
         for instance in range(len(contents)):
             if contents[instance].replace('\n', '') == filename:
                 for tag in tags:
-                    if f'{tag}:' in contents[instance + 1]:
-                        contents[instance + 1] = contents[instance + 1].replace(f'{tag}:0 ', '')
+                    if f'{tag};' in contents[instance + 1]:
+                        contents[instance + 1] = contents[instance + 1].replace(f'{tag};1 ', '')
 
     with open(FOLDER_PATH + r'\\{}'.format('main.ajr'), 'w') as file:
         file.writelines(contents)
     file.close()
 
 
-def createPlaylist(tag):  # NEW PLAYLIST
-    if tag != '':
-        if tag != 'EMPTY':
-            RESULTS = searchForTags(MAIN_LIST, [tag])
-        else:
-            RESULTS = searchForTags(MAIN_LIST, [None])
+def createPlaylist():  # NEW PLAYLIST
+    RESULTS = [] ## wynik wyszukiwania
+    name = [] ## nazwa playlisty, pow warunkiem if name != PLAYLISTS_LIST[instance].pl_name
 
-    else:
-        RESULTS = searchForTags(MAIN_LIST, [])
+    counter = 0
+    while os.path.isfile(FOLDER_PATH + r'\\playlist{}.ajr'.format(counter)):
+        counter += 1
 
-    if not RESULTS and tag == '':
-        print("Nothing found!")
-    else:
-        name = input("Please enter your playlist's name: ").upper()
-
-        for instance in range(len(PLAYLISTS_LIST)):
-            while True:
-                if f'"{name}"' == PLAYLISTS_LIST[instance].pl_name:
-                    name = input("Choose another name: ").upper()
-                    continue
-                else:
-                    break
-
-        counter = 0
-        while os.path.isfile(FOLDER_PATH + r'\\playlist{}.ajr'.format(counter)):
-            counter += 1
-
-        with open(FOLDER_PATH + r'\\playlist{}.ajr'.format(counter), 'w') as file:
-            file.write(f'"{name}"\n')
-            for result in RESULTS:
-                result = result.tr_path.split(r'\\')[-1]
-                file.write(f'{result}\n')
-        file.close()
+    with open(FOLDER_PATH + r'\\playlist{}.ajr'.format(counter), 'w') as file:
+        file.write(f'"{name}"\n')
+        for result in RESULTS:
+            result = result.tr_path.split(r'\\')[-1]
+            file.write(f'{result}\n')
+    file.close()
 
 
 def choosePlaylist(playlist_name):  # CHANGE PLAYLISTS
@@ -695,7 +676,6 @@ def Remove_From_Playlist2():
 
 def Refresh_Library():
     createList(True)
-    addTagsToMain()
     readMainList()
 
 playlist_contents.bind("<KeyPress-Delete>", Remove_From_Playlist)
@@ -966,11 +946,12 @@ def startup():
     except IndexError:
         ACTIVE_LIST = MAIN_LIST
 
-    make_base() ## Obydwie funkcje do umieszczenia pod jedną opcją ("Otaguj")
-    addTagsToMain() ## To też
+    make_base()
 
     for song in MAIN_LIST:
         info(song.tr_path)
+
+    addTagsToMain()
 
     displayPlaylist(ACTIVE_LIST)
 
