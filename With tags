@@ -685,6 +685,7 @@ def Refresh_Library():
 
     addTagsToMain()
 
+
 playlist_contents.bind("<KeyPress-Delete>", Remove_From_Playlist)
 sort_menu.add_command(label="Alphabetically", command=lambda:sortPlaylist('ALPHA', ACTIVE_LIST))
 sort_menu.add_command(label="By format", command=lambda:sortPlaylist('FORMAT', ACTIVE_LIST))
